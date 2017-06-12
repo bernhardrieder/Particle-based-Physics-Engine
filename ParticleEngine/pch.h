@@ -95,6 +95,10 @@ namespace DX
 //my own classes
 #include "Camera.h"
 #include "Particle.h"
-#include "ParticleForceGenerator.h"
 #include "ParticleForceRegistry.h"
 #include "ParticleRenderer.h"
+#include "ParticleForceGenerator.h"
+#include "ParticleGravityForceGenerator.h"
+#include "ParticleSpringForceGenerator.h"
+#include "ParticleDragForceGenerator.h"
+#include "ParticleBungeeForceGenerator.h"

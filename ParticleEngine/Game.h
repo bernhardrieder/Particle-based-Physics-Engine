@@ -67,7 +67,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> m_inputLayout;
 
 	std::vector<Particle*> m_particles;
-	ParticleGravity* m_particleGravity = nullptr;
+	std::vector<ParticleForceGenerator*> m_particleForceGenerators;
 	ParticleRenderer* m_particleRenderer = nullptr;
 	ParticleForceRegistry* m_particleForceRegistry = nullptr;
+	DirectX::SimpleMath::Vector3 m_particleAnchor[3];
 };

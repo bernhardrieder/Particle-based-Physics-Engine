@@ -8,6 +8,9 @@
       <UniqueIdentifier>4e92589b-22ce-4692-9106-4ed47419f864</UniqueIdentifier>
       <Extensions>ico;cur;bmp;dds;dlg;fbx;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tga;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="ForceGenerators">
+      <UniqueIdentifier>{643e2d35-cc56-4e1d-a4dd-abf44a95988b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -20,9 +23,23 @@
     </ClInclude>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Particle.h" />
-    <ClInclude Include="ParticleForceGenerator.h" />
     <ClInclude Include="ParticleForceRegistry.h" />
     <ClInclude Include="ParticleRenderer.h" />
+    <ClInclude Include="ParticleForceGenerator.h">
+      <Filter>ForceGenerators</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleDragForceGenerator.h">
+      <Filter>ForceGenerators</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleSpringForceGenerator.h">
+      <Filter>ForceGenerators</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleGravityForceGenerator.h">
+      <Filter>ForceGenerators</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleBungeeForceGenerator.h">
+      <Filter>ForceGenerators</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -33,9 +50,20 @@
     </ClCompile>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Particle.cpp" />
-    <ClCompile Include="ParticleForceGenerator.cpp" />
     <ClCompile Include="ParticleForceRegistry.cpp" />
     <ClCompile Include="ParticleRenderer.cpp" />
+    <ClCompile Include="ParticleDragForceGenerator.cpp">
+      <Filter>ForceGenerators</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleSpringForceGenerator.cpp">
+      <Filter>ForceGenerators</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleGravityForceGenerator.cpp">
+      <Filter>ForceGenerators</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleBungeeForceGenerator.cpp">
+      <Filter>ForceGenerators</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />
