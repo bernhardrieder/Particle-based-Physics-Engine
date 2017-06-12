@@ -46,12 +46,17 @@ private:
     void CreateDeviceDependentResources();
     void CreateWindowSizeDependentResources();
 
+	void checkAndProcessKeyboardInput(const float& deltaTime);
+	void checkAndProcessMouseInput(const float& deltaTime);
+
     // Device resources.
     std::unique_ptr<DX::DeviceResources>    m_deviceResources;
 
     // Rendering loop timer.
     DX::StepTimer                           m_timer;
 
+
+	Camera m_camera;
 	std::unique_ptr<DirectX::Keyboard> m_keyboard;
 	std::unique_ptr<DirectX::Mouse> m_mouse;
 };

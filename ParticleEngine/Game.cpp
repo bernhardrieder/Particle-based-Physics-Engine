@@ -65,8 +65,24 @@ void Game::Update(DX::StepTimer const& timer)
 	if (kb.Escape)
 		PostQuitMessage(0);
 
+	checkAndProcessKeyboardInput(elapsedTime);
+	checkAndProcessMouseInput(elapsedTime);
+
+	m_camera.UpdateViewMatrix();
+}
+
+void Game::checkAndProcessKeyboardInput(const float& deltaTime)
+{
+	auto kb = m_keyboard->GetState();
+	if (kb.Escape)
+		PostQuitMessage(0);
+}
+
+void Game::checkAndProcessMouseInput(const float& deltaTime)
+{
 	auto mouse = m_mouse->GetState();
 }
+
 #pragma endregion
 
 #pragma region Frame Render
@@ -166,12 +182,19 @@ void Game::CreateDeviceDependentResources()
 
     // TODO: Initialize device dependent objects here (independent of window size).
     device;
+	m_camera.SetPosition(0.0f, 0.0f, -1.f);
+	m_camera.LookAt(Vector3::Up, Vector3(0, 0, 0) - m_camera.GetPosition());
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.
 void Game::CreateWindowSizeDependentResources()
 {
+	auto width = m_deviceResources->GetScreenViewport().Width;
+	auto height = m_deviceResources->GetScreenViewport().Height;
+
     // TODO: Initialize windows-size dependent objects here.
+	m_camera.SetOrthographicLens(width, height, 0.f, 1000.f);
+	m_camera.UpdateViewMatrix();
 }
 
 void Game::OnDeviceLost()
