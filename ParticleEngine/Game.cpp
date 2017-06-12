@@ -101,7 +101,25 @@ void Game::Render()
     auto context = m_deviceResources->GetD3DDeviceContext();
 
     // TODO: Add your rendering code here.
-    context;
+	context->ClearRenderTargetView(m_deviceResources->GetRenderTargetView(), Colors::Black);
+	context->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
+	context->OMSetDepthStencilState(m_states->DepthNone(), 0);
+	context->RSSetState(m_states->CullNone());
+
+	m_effect->SetMatrices(Matrix::CreateScale(10), m_camera.GetView(), m_camera.GetProj());
+	m_effect->Apply(context);
+
+	context->IASetInputLayout(m_inputLayout.Get());
+
+	m_batch->Begin();
+
+	VertexPositionColor v1(Vector3(0.f, 0.5f, 0.5f), Colors::Yellow);
+	VertexPositionColor v2(Vector3(0.5f, -0.5f, 0.5f), Colors::Yellow);
+	VertexPositionColor v3(Vector3(-0.5f, -0.5f, 0.5f), Colors::Yellow);
+
+	m_batch->DrawTriangle(v1, v2, v3);
+
+	m_batch->End();
 
     m_deviceResources->PIXEndEvent();
 
@@ -181,9 +199,26 @@ void Game::CreateDeviceDependentResources()
     auto device = m_deviceResources->GetD3DDevice();
 
     // TODO: Initialize device dependent objects here (independent of window size).
-    device;
 	m_camera.SetPosition(0.0f, 0.0f, -1.f);
 	m_camera.LookAt(Vector3::Up, Vector3(0, 0, 0) - m_camera.GetPosition());
+
+	m_states = std::make_unique<CommonStates>(device);
+
+	m_effect = std::make_unique<BasicEffect>(device);
+	m_effect->SetVertexColorEnabled(true);
+
+	void const* shaderByteCode;
+	size_t byteCodeLength;
+
+	m_effect->GetVertexShaderBytecode(&shaderByteCode, &byteCodeLength);
+
+	DX::ThrowIfFailed(
+		device->CreateInputLayout(VertexPositionColor::InputElements,
+			VertexPositionColor::InputElementCount,
+			shaderByteCode, byteCodeLength,
+			m_inputLayout.ReleaseAndGetAddressOf()));
+
+	m_batch = std::make_unique<PrimitiveBatch<VertexPositionColor>>(m_deviceResources->GetD3DDeviceContext());
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.
@@ -193,13 +228,17 @@ void Game::CreateWindowSizeDependentResources()
 	auto height = m_deviceResources->GetScreenViewport().Height;
 
     // TODO: Initialize windows-size dependent objects here.
-	m_camera.SetOrthographicLens(width, height, 0.f, 1000.f);
+	m_camera.SetOrthographicLens(width, height, 0.f, 100.f);
 	m_camera.UpdateViewMatrix();
 }
 
 void Game::OnDeviceLost()
 {
     // TODO: Add Direct3D resource cleanup here.
+	m_states.reset();
+	m_effect.reset();
+	m_batch.reset();
+	m_inputLayout.Reset();
 }
 
 void Game::OnDeviceRestored()
