@@ -15,6 +15,7 @@ class Game : public DX::IDeviceNotify
 public:
 
     Game();
+	~Game();
 
     // Initialization and management
     void Initialize(HWND window, int width, int height);
@@ -49,10 +50,6 @@ private:
 	void checkAndProcessKeyboardInput(const float& deltaTime);
 	void checkAndProcessMouseInput(const float& deltaTime);
 
-	std::vector<DirectX::SimpleMath::Vector2> createCircleVerticesLineStrip(const float& radius) const;
-	std::vector<DirectX::SimpleMath::Vector2> createCircleVerticesTriangleFan(const DirectX::SimpleMath::Vector2& center, const float& radius) const;
-	void createCircleVertices(std::vector<DirectX::SimpleMath::Vector2>& vertices, const float& radius, const float& resolution) const;
-
     // Device resources.
     std::unique_ptr<DX::DeviceResources>    m_deviceResources;
 
@@ -68,4 +65,9 @@ private:
 	std::unique_ptr<DirectX::BasicEffect> m_effect;
 	std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionColor>> m_batch;
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> m_inputLayout;
+
+	std::vector<Particle*> m_particles;
+	ParticleGravity* m_particleGravity = nullptr;
+	ParticleRenderer* m_particleRenderer = nullptr;
+	ParticleForceRegistry* m_particleForceRegistry = nullptr;
 };

@@ -88,4 +88,13 @@ namespace DX
 #include "SpriteFont.h"
 #include "VertexTypes.h"
 #include "WICTextureLoader.h"
+
+#include <iostream>
+#include <ctime>
+
+//my own classes
 #include "Camera.h"
+#include "Particle.h"
+#include "ParticleForceGenerator.h"
+#include "ParticleForceRegistry.h"
+#include "ParticleRenderer.h"
