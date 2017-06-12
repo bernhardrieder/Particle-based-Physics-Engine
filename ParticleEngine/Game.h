@@ -49,6 +49,10 @@ private:
 	void checkAndProcessKeyboardInput(const float& deltaTime);
 	void checkAndProcessMouseInput(const float& deltaTime);
 
+	std::vector<DirectX::SimpleMath::Vector2> createCircleVerticesLineStrip(const float& radius) const;
+	std::vector<DirectX::SimpleMath::Vector2> createCircleVerticesTriangleFan(const DirectX::SimpleMath::Vector2& center, const float& radius) const;
+	void createCircleVertices(std::vector<DirectX::SimpleMath::Vector2>& vertices, const float& radius, const float& resolution) const;
+
     // Device resources.
     std::unique_ptr<DX::DeviceResources>    m_deviceResources;
 

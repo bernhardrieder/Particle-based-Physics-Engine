@@ -248,3 +248,28 @@ void Game::OnDeviceRestored()
     CreateWindowSizeDependentResources();
 }
 #pragma endregion
+
+std::vector<Vector2> Game::createCircleVerticesLineStrip(const float& radius) const
+{
+	std::vector<Vector2> vertices;
+	createCircleVertices(vertices, radius, 50);
+	vertices.push_back(vertices[0]);
+	return vertices;
+}
+
+std::vector<Vector2> Game::createCircleVerticesTriangleFan(const DirectX::SimpleMath::Vector2& center, const float& radius) const
+{
+	std::vector<Vector2> vertices;
+	vertices.push_back(center);
+	createCircleVertices(vertices, radius, 50);
+	return vertices;
+}
+
+void Game::createCircleVertices(std::vector<DirectX::SimpleMath::Vector2>& vertices, const float& radius, const float& resolution) const
+{
+	for (float i = 0; i <= resolution; i += 1.0f)
+	{
+		float t = XM_PI * 2 * i / resolution;
+		vertices.push_back(Vector2(radius * cos(t), radius * -sin(t)));
+	}
+}
