@@ -143,17 +143,27 @@ void Game::Initialize(HWND window, int width, int height)
 	m_particleRenderer->AddParticle(m_particles);
 
 
-	// ---------------------------- PLATFORMS ----------------------------
-	Vector3 platformStartEnd[2] = { Vector3(-100,-100,0), Vector3(100,0,0) };
-	Platform* platform = new Platform();
-	platform->SetColorAndThickness(Colors::Blue, 5);
-	platform->Initialize(platformStartEnd[0], platformStartEnd[1], m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext());
-	m_platforms.push_back(platform);
-	
-	ParticlePlatformContactsGenerator* platformContactsGenerator = new ParticlePlatformContactsGenerator(platformStartEnd[0], platformStartEnd[1]);
-	platformContactsGenerator->AddParticle(m_particles);
-	m_particleContactGenerators.push_back(platformContactsGenerator);
-	m_particleWorld->GetContactGenerators().push_back(platformContactsGenerator);
+	// ---------------------------- LEVEL BOUND PLATFORMS ----------------------------
+	Vector2 windowHalf = Vector2(width / 2.f, height / 2.f);
+
+	Vector3 levelBoundPlatformStartEnd[4][2] = {
+		{ Vector3(-windowHalf.x, -windowHalf.y, 0), Vector3(windowHalf.x, -windowHalf.y, 0) },	// ground
+		{ Vector3(windowHalf.x, windowHalf.y, 0), Vector3(-windowHalf.x, windowHalf.y, 0) },	// ceiling
+		{ Vector3(-windowHalf.x, windowHalf.y, 0), Vector3(-windowHalf.x, -windowHalf.y, 0) },	// left wall
+		{ Vector3(windowHalf.x, -windowHalf.y, 0), Vector3(windowHalf.x, windowHalf.y, 0) }	// right wall
+	};
+	for(int i = 0; i < 4; ++i)
+	{
+		Platform* platform = new Platform();
+		platform->SetColorAndThickness(Colors::Blue, 1);
+		platform->Initialize(levelBoundPlatformStartEnd[i][0], levelBoundPlatformStartEnd[i][1], m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext());
+		m_platforms.push_back(platform);
+
+		ParticlePlatformContactsGenerator* platformContactsGenerator = new ParticlePlatformContactsGenerator(levelBoundPlatformStartEnd[i][0], levelBoundPlatformStartEnd[i][1]);
+		platformContactsGenerator->AddParticle(m_particles);
+		m_particleContactGenerators.push_back(platformContactsGenerator);
+		m_particleWorld->GetContactGenerators().push_back(platformContactsGenerator);
+	}
 }
 
 #pragma region Frame Update
