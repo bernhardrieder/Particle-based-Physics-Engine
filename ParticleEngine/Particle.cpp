@@ -31,7 +31,7 @@ void Particle::Integrate(const float& deltaTime)
 	m_velocity *= powf(m_damping, deltaTime);
 
 	//clear the forces
-	clearForceAccumulator();
+	ClearForceAccumulator();
 }
 
 void Particle::SetPosition(const DirectX::SimpleMath::Vector3& position)
@@ -54,6 +54,16 @@ DirectX::SimpleMath::Vector3 Particle::GetVelocity() const
 	return m_velocity;
 }
 
+void Particle::SetAcceleration(const DirectX::SimpleMath::Vector3& acceleration)
+{
+	m_acceleration = acceleration;
+}
+
+DirectX::SimpleMath::Vector3 Particle::GetAcceleration() const
+{
+	return m_acceleration;
+}
+
 void Particle::SetMass(const float& mass)
 {
 	m_mass = mass;
@@ -65,12 +75,17 @@ float Particle::GetMass() const
 	return m_mass;
 }
 
+float Particle::GetInverseMass() const
+{
+	return m_inverseMass;
+}
+
 bool Particle::HasFiniteMass() const
 {
 	return m_inverseMass >= 0.0f;
 }
 
-void Particle::clearForceAccumulator()
+void Particle::ClearForceAccumulator()
 {
 	m_forceAccumulated = Vector3::Zero;
 }
@@ -78,4 +93,20 @@ void Particle::clearForceAccumulator()
 void Particle::AddForce(const DirectX::SimpleMath::Vector3& force)
 {
 	m_forceAccumulated += force;
+}
+
+void ParticleManagement::AddParticle(Particle* particle)
+{
+	m_particles.push_back(particle);
+}
+
+void ParticleManagement::RemoveParticle(Particle* particle)
+{
+	for (size_t index = 0; index < m_particles.size(); ++index)
+	{
+		if (m_particles[index] == particle)
+		{
+			m_particles.erase(m_particles.begin() + index);
+		}
+	}
 }

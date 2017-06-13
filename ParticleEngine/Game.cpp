@@ -60,18 +60,18 @@ void Game::Initialize(HWND window, int width, int height)
 	m_particleRenderer->Initialize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext());
 	ParticleGravityForceGenerator* gravityForceGenerator = new ParticleGravityForceGenerator(Vector3::Down * 20);
 	m_particleForceGenerators.push_back(gravityForceGenerator);
-	for (int i = 1; i <= 10; ++i)
-	{
-		Particle* particle = new Particle();
-		particle->SetPosition(Vector3::UnitX * static_cast<float>(i)*10.f);
-		particle->SetMass(static_cast<float>(i));
-		particle->SetVelocity(Vector3::Up * i *(rand() % 20) + Vector3::Left * i *(rand() % 10));
+	//for (int i = 1; i <= 10; ++i)
+	//{
+	//	Particle* particle = new Particle();
+	//	particle->SetPosition(Vector3::UnitX * static_cast<float>(i)*10.f);
+	//	particle->SetMass(static_cast<float>(i));
+	//	particle->SetVelocity(Vector3::Up * i *(rand() % 20) + Vector3::Left * i *(rand() % 10));
 
 
-		m_particles.push_back(particle);
-		m_particleForceRegistry->Add(particle, gravityForceGenerator);
-		m_particleRenderer->Add(particle);
-	}
+	//	m_particles.push_back(particle);
+	//	m_particleForceRegistry->Add(particle, gravityForceGenerator);
+	//	m_particleRenderer->Add(particle);
+	//}
 
 	m_particleAnchor[0] = Vector3(-50, 50, 0);
 	m_particleAnchor[1] = Vector3(0, 50, 0);
@@ -91,15 +91,15 @@ void Game::Initialize(HWND window, int width, int height)
 	anchoredBungeeParticle->SetPosition(m_particleAnchor[0]);
 	anchoredBungeeParticle->SetMass(10);
 	m_particles.push_back(anchoredBungeeParticle);
-	m_particleRenderer->Add(anchoredBungeeParticle);
+	m_particleRenderer->AddParticle(anchoredBungeeParticle);
 	m_particleForceRegistry->Add(anchoredBungeeParticle, anchoredBungeeForceGenerator);
 	m_particleForceRegistry->Add(anchoredBungeeParticle, gravityForceGenerator);
 
 	Particle* anchoredFakeStiffSpringParticle = new Particle();
-	anchoredFakeStiffSpringParticle->SetPosition(m_particleAnchor[1]);
+	anchoredFakeStiffSpringParticle->SetPosition(m_particleAnchor[1]+Vector3::Down*50);
 	anchoredFakeStiffSpringParticle->SetMass(10);
 	m_particles.push_back(anchoredFakeStiffSpringParticle);
-	m_particleRenderer->Add(anchoredFakeStiffSpringParticle);
+	m_particleRenderer->AddParticle(anchoredFakeStiffSpringParticle);
 	m_particleForceRegistry->Add(anchoredFakeStiffSpringParticle, anchoredFakeStiffSpringForceGenerator);
 	m_particleForceRegistry->Add(anchoredFakeStiffSpringParticle, gravityForceGenerator);
 
@@ -107,7 +107,7 @@ void Game::Initialize(HWND window, int width, int height)
 	anchoredSpringParticle->SetPosition(m_particleAnchor[2]);
 	anchoredSpringParticle->SetMass(10);
 	m_particles.push_back(anchoredSpringParticle);
-	m_particleRenderer->Add(anchoredSpringParticle);
+	m_particleRenderer->AddParticle(anchoredSpringParticle);
 	m_particleForceRegistry->Add(anchoredSpringParticle, anchoredSpringForceGenerator);
 	m_particleForceRegistry->Add(anchoredSpringParticle, gravityForceGenerator);
 
@@ -121,7 +121,7 @@ void Game::Initialize(HWND window, int width, int height)
 	bungeeParticle->SetPosition(m_particleAnchor[0] + Vector3::UnitX * 25);
 	bungeeParticle->SetMass(10);
 	m_particles.push_back(bungeeParticle);
-	m_particleRenderer->Add(bungeeParticle);
+	m_particleRenderer->AddParticle(bungeeParticle);
 	m_particleForceRegistry->Add(bungeeParticle, bungeeForceGenerator);
 	m_particleForceRegistry->Add(bungeeParticle, gravityForceGenerator);
 
@@ -129,7 +129,7 @@ void Game::Initialize(HWND window, int width, int height)
 	springParticle->SetPosition(m_particleAnchor[2] + Vector3::UnitX * 25);
 	springParticle->SetMass(10);
 	m_particles.push_back(springParticle);
-	m_particleRenderer->Add(springParticle);
+	m_particleRenderer->AddParticle(springParticle);
 	m_particleForceRegistry->Add(springParticle, springForceGenerator);
 	m_particleForceRegistry->Add(springParticle, gravityForceGenerator);
 }

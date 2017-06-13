@@ -1,5 +1,5 @@
 #pragma once
-class ParticleRenderer
+class ParticleRenderer : public ParticleManagement
 {
 public:
 	ParticleRenderer();
@@ -8,8 +8,6 @@ public:
 
 	void Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext);
 	void Render(ID3D11DeviceContext* deviceContext, const Camera& camera);
-	void Add(Particle* particle);
-	void Remove(Particle* particle);
 	void SetParticleColor(const DirectX::XMVECTORF32& color);
 
 private:
@@ -24,5 +22,4 @@ private:
 	std::vector<DirectX::VertexPositionColor> m_vertices;
 
 	DirectX::XMVECTORF32 m_particleColor = DirectX::Colors::White;
-	std::vector<class Particle*> m_particles;
 };

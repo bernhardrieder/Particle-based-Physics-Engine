@@ -13,16 +13,19 @@ public:
 	void SetVelocity(const DirectX::SimpleMath::Vector3& velocity);
 	DirectX::SimpleMath::Vector3 GetVelocity() const;
 
+	void SetAcceleration(const DirectX::SimpleMath::Vector3& acceleration);
+	DirectX::SimpleMath::Vector3 GetAcceleration() const;
+
 	void SetMass(const float& mass);
 	float GetMass() const;
+	float GetInverseMass() const;
 
 	void AddForce(const DirectX::SimpleMath::Vector3& force);
 
 	bool HasFiniteMass() const;
+	void ClearForceAccumulator();
 
 protected:
-	void clearForceAccumulator();
-
 	DirectX::SimpleMath::Vector3 m_position = DirectX::SimpleMath::Vector3::Zero;
 	DirectX::SimpleMath::Vector3 m_velocity = DirectX::SimpleMath::Vector3::Zero;
 	DirectX::SimpleMath::Vector3 m_acceleration = DirectX::SimpleMath::Vector3::Zero;
@@ -34,3 +37,12 @@ protected:
 	float m_inverseMass = 0;
 };
 
+class ParticleManagement
+{
+public:
+	void AddParticle(Particle* particle);;
+	void RemoveParticle(Particle* particle);
+
+protected:
+	std::vector<Particle*> m_particles;
+};

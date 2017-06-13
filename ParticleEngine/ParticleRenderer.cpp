@@ -69,22 +69,6 @@ void ParticleRenderer::Render(ID3D11DeviceContext* deviceContext, const Camera& 
 	}
 }
 
-void ParticleRenderer::Add(Particle* particle)
-{
-	m_particles.push_back(particle);
-}
-
-void ParticleRenderer::Remove(Particle* particle)
-{
-	for (size_t index = 0; index < m_particles.size(); ++index)
-	{
-		if (m_particles[index] == particle)
-		{
-			m_particles.erase(m_particles.begin() + index);
-		}
-	}
-}
-
 void ParticleRenderer::SetParticleColor(const DirectX::XMVECTORF32& color)
 {
 	m_particleColor = color;

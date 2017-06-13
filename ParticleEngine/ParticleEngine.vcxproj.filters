@@ -40,6 +40,9 @@
     <ClInclude Include="ParticleBungeeForceGenerator.h">
       <Filter>ForceGenerators</Filter>
     </ClInclude>
+    <ClInclude Include="ParticleWorld.h" />
+    <ClInclude Include="ParticleContacts.h" />
+    <ClInclude Include="ParticleContactGenerators.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -64,6 +67,9 @@
     <ClCompile Include="ParticleBungeeForceGenerator.cpp">
       <Filter>ForceGenerators</Filter>
     </ClCompile>
+    <ClCompile Include="ParticleWorld.cpp" />
+    <ClCompile Include="ParticleContacts.cpp" />
+    <ClCompile Include="ParticleContactGenerators.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />
