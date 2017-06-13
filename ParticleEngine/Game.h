@@ -71,5 +71,5 @@ private:
 	ParticleRenderer* m_particleRenderer = nullptr;
 	ParticleWorld* m_particleWorld;
 	DirectX::SimpleMath::Vector3 m_particleAnchor[3];
-
+	std::vector<Platform*> m_platforms;
 };

@@ -30,6 +30,10 @@ Game::~Game()
 	{
 		delete forceGenerator;
 	}
+	for (Platform* platform : m_platforms)
+	{
+		delete platform;
+	}
 }
 
 // Initialize the Direct3D resources required to run.
@@ -127,6 +131,14 @@ void Game::Initialize(HWND window, int width, int height)
 
 	m_particleWorld->AddParticle(m_particles);
 	m_particleRenderer->AddParticle(m_particles);
+
+
+
+	Platform* platform = new Platform();
+	platform->SetColorAndThickness(Colors::Blue, 10);
+	platform->Initialize(Vector3(-100,-100,0), Vector3(100,0,0), m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext());
+	m_platforms.push_back(platform);
+
 }
 
 #pragma region Frame Update
@@ -210,7 +222,10 @@ void Game::Render()
 
 	//m_batch->End();
 	m_particleRenderer->Render(context, m_camera);
-
+	for(Platform* platform : m_platforms)
+	{
+		platform->Render(context, m_camera);
+	}
 	m_deviceResources->PIXEndEvent();
 
 	// Show the new frame.

@@ -43,6 +43,7 @@
     <ClInclude Include="ParticleWorld.h" />
     <ClInclude Include="ParticleContacts.h" />
     <ClInclude Include="ParticleContactGenerators.h" />
+    <ClInclude Include="Platform.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -70,6 +71,7 @@
     <ClCompile Include="ParticleWorld.cpp" />
     <ClCompile Include="ParticleContacts.cpp" />
     <ClCompile Include="ParticleContactGenerators.cpp" />
+    <ClCompile Include="Platform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />

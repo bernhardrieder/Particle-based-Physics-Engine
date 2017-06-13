@@ -25,21 +25,21 @@ int ParticleGroundContactsGenerator::AddContact(ParticleContact* contact, const 
 	return count;
 }
 
-Platform::Platform()
+ParticlePlatformContactsGenerator::ParticlePlatformContactsGenerator()
 {
 }
 
-Platform::Platform(const DirectX::SimpleMath::Vector3& start, const DirectX::SimpleMath::Vector3& end): m_start(start), m_end(end)
+ParticlePlatformContactsGenerator::ParticlePlatformContactsGenerator(const DirectX::SimpleMath::Vector3& start, const DirectX::SimpleMath::Vector3& end): m_start(start), m_end(end)
 {
 }
 
-void Platform::Initialize(const DirectX::SimpleMath::Vector3& start, const DirectX::SimpleMath::Vector3& end)
+void ParticlePlatformContactsGenerator::Initialize(const DirectX::SimpleMath::Vector3& start, const DirectX::SimpleMath::Vector3& end)
 {
 	m_start = start;
 	m_end = end;
 }
 
-int Platform::AddContact(ParticleContact* contact, const int& limit) const
+int ParticlePlatformContactsGenerator::AddContact(ParticleContact* contact, const int& limit) const
 {
 	float restitution = 0.0f;
 

@@ -33,11 +33,11 @@ public:
 * Platforms are two dimensional: lines on which the
 * particles can rest. Platforms are also contact generators for the physics.
 */
-class Platform : public ParticleContactGenerator, public ParticleManagement
+class ParticlePlatformContactsGenerator : public ParticleContactGenerator, public ParticleManagement
 {
 public:
-	Platform();
-	Platform(const DirectX::SimpleMath::Vector3& start, const DirectX::SimpleMath::Vector3& end);
+	ParticlePlatformContactsGenerator();
+	ParticlePlatformContactsGenerator(const DirectX::SimpleMath::Vector3& start, const DirectX::SimpleMath::Vector3& end);
 
 	void Initialize(const DirectX::SimpleMath::Vector3& start, const DirectX::SimpleMath::Vector3& end);
 	int AddContact(ParticleContact* contact, const int& limit) const override;
