@@ -41,8 +41,6 @@ void ParticlePlatformContactsGenerator::Initialize(const DirectX::SimpleMath::Ve
 
 int ParticlePlatformContactsGenerator::AddContact(ParticleContact* contact, const int& limit) const
 {
-	float restitution = 0.0f;
-
 	int used = 0;
 	for (Particle* particle : m_particles)
 	{
@@ -63,7 +61,7 @@ int ParticlePlatformContactsGenerator::AddContact(ParticleContact* contact, cons
 				// We have a collision
 				contact->ContactNormal = toParticleNormalized;
 				contact->ContactNormal.z = 0;
-				contact->Restitution = restitution;
+				contact->Restitution = particle->GetBouncinessFactor();
 				contact->ContactParticles[0] = particle;
 				contact->ContactParticles[1] = nullptr;
 				contact->Penetration = particle->GetWorldSpaceRadius() - toParticle.Length();
@@ -83,7 +81,7 @@ int ParticlePlatformContactsGenerator::AddContact(ParticleContact* contact, cons
 				// We have a collision
 				contact->ContactNormal = toParticleNormalized;
 				contact->ContactNormal.z = 0;
-				contact->Restitution = restitution;
+				contact->Restitution = particle->GetBouncinessFactor();
 				contact->ContactParticles[0] = particle;
 				contact->ContactParticles[1] = nullptr;
 				contact->Penetration = particle->GetWorldSpaceRadius() - toParticle.Length();
@@ -104,7 +102,7 @@ int ParticlePlatformContactsGenerator::AddContact(ParticleContact* contact, cons
 
 				contact->ContactNormal = contactNormal;
 				contact->ContactNormal.z = 0;
-				contact->Restitution = restitution;
+				contact->Restitution = particle->GetBouncinessFactor();
 				contact->ContactParticles[0] = particle;
 				contact->ContactParticles[1] = nullptr;
 				contact->Penetration = particle->GetWorldSpaceRadius() - sqrtf(distanceToPlatform);
@@ -114,4 +112,60 @@ int ParticlePlatformContactsGenerator::AddContact(ParticleContact* contact, cons
 		}
 	}
 	return used;
+}
+
+int ParticleParticleContactGenerator::AddContact(ParticleContact* contact, const int& limit) const
+{
+	std::vector<std::tuple<Particle*, Particle*>> usedParticles;
+	usedParticles.reserve(limit);
+
+	int count = 0;
+	for (Particle* particle : m_particles)
+	{
+		for (Particle* other : m_particles)
+		{
+			if (particle == other)
+				continue;
+
+			Vector3 posParticle = particle->GetPosition();
+			Vector3 posOther = other->GetPosition();
+
+			Vector3 midline = posParticle - posOther;
+			float size = midline.Length();
+
+			if (size <= 0.0f || size >= particle->GetWorldSpaceRadius() + other->GetWorldSpaceRadius())
+				continue;
+
+			if (particlePairUsed(usedParticles, particle, other))
+				continue;
+
+			Vector3 normal = midline * (1.f / size);
+			normal.Normalize();
+
+			contact->ContactNormal = normal;
+			contact->ContactParticles[0] = particle;
+			contact->ContactParticles[1] = other;
+			contact->Penetration = particle->GetWorldSpaceRadius() + other->GetWorldSpaceRadius() - size;
+			contact->Restitution = particle->GetBouncinessFactor() + other->GetBouncinessFactor();
+			contact++;
+			count++;
+
+			usedParticles.push_back(std::make_tuple(particle, other));
+
+			if (count >= limit)
+				return count;
+		}
+	}
+	return count;
+}
+
+bool ParticleParticleContactGenerator::particlePairUsed(const std::vector<std::tuple<Particle*, Particle*>>& particlePairs, Particle* one, Particle* two)
+{
+	for (const std::tuple<Particle*, Particle*>& particlePair : particlePairs)
+	{
+		if (std::get<0>(particlePair) == one && std::get<1>(particlePair) == two ||
+			std::get<0>(particlePair) == two && std::get<1>(particlePair) == one)
+			return true;
+	}
+	return false;
 }

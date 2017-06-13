@@ -20,16 +20,16 @@ public:
 	float GetMass() const;
 	float GetInverseMass() const;
 
+	void SetBouncinessFactor(const float& bouncinessFactor);
+	float GetBouncinessFactor() const;
+
 	void AddForce(const DirectX::SimpleMath::Vector3& force);
 
 	bool HasFiniteMass() const;
 	void ClearForceAccumulator();
 
-	void SetWorldSpaceRadius(const float& radius) { m_worldSpaceRadius = radius; };
-	float GetWorldSpaceRadius() {
-		return m_worldSpaceRadius
-			;
-	}
+	void SetWorldSpaceRadius(const float& radius);;
+	float GetWorldSpaceRadius() const;
 
 protected:
 	DirectX::SimpleMath::Vector3 m_position = DirectX::SimpleMath::Vector3::Zero;
@@ -41,7 +41,8 @@ protected:
 	float m_damping = 0.99f;
 	float m_mass = 0;
 	float m_inverseMass = 0;
-	float m_worldSpaceRadius;
+	float m_worldSpaceRadius = 1;
+	float m_bouncinessFactor = 0.1f;
 };
 
 class ParticleManagement

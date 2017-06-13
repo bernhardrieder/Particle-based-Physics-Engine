@@ -46,3 +46,12 @@ private:
 	DirectX::SimpleMath::Vector3 m_start = DirectX::SimpleMath::Vector3::Zero;
 	DirectX::SimpleMath::Vector3 m_end = DirectX::SimpleMath::Vector3::Zero;
 };
+
+class ParticleParticleContactGenerator : public ParticleContactGenerator, public ParticleManagement
+{
+public:
+	int AddContact(ParticleContact* contact, const int& limit) const override;
+
+private:
+	static bool particlePairUsed(const std::vector<std::tuple<Particle*, Particle*>>& particlePairs, Particle* one, Particle* two);
+};

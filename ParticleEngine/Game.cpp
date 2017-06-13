@@ -76,6 +76,7 @@ void Game::Initialize(HWND window, int width, int height)
 		particle->SetVelocity(Vector3::Up * i *(rand() % 20) + Vector3::Left * i *(rand() % 10));
 		particle->SetAcceleration(gravity);
 		particle->SetWorldSpaceRadius(static_cast<float>(i) / 2.f);
+		particle->SetBouncinessFactor(0.5f);
 		m_particles.push_back(particle);
 	}
 
@@ -143,7 +144,7 @@ void Game::Initialize(HWND window, int width, int height)
 	m_particleRenderer->AddParticle(m_particles);
 
 
-	// ---------------------------- LEVEL BOUND PLATFORMS ----------------------------
+	// ---------------------------- LEVEL BOUND PLATFORMS CONTACTS ----------------------------
 	Vector2 windowHalf = Vector2(width / 2.f, height / 2.f);
 
 	Vector3 levelBoundPlatformStartEnd[4][2] = {
@@ -164,6 +165,13 @@ void Game::Initialize(HWND window, int width, int height)
 		m_particleContactGenerators.push_back(platformContactsGenerator);
 		m_particleWorld->GetContactGenerators().push_back(platformContactsGenerator);
 	}
+
+	// ---------------------------- PARTICLE VS PARTICLE CONTACTS ----------------------------
+	ParticleParticleContactGenerator* particleContactGenerator = new ParticleParticleContactGenerator();
+	particleContactGenerator->AddParticle(m_particles);
+	m_particleContactGenerators.push_back(particleContactGenerator);
+	m_particleWorld->GetContactGenerators().push_back(particleContactGenerator);
+
 }
 
 #pragma region Frame Update

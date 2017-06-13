@@ -80,6 +80,11 @@ float Particle::GetInverseMass() const
 	return m_inverseMass;
 }
 
+void Particle::SetBouncinessFactor(const float& bouncinessFactor)
+{
+	m_bouncinessFactor = bouncinessFactor;
+}
+
 bool Particle::HasFiniteMass() const
 {
 	return m_inverseMass >= 0.0f;
@@ -88,6 +93,21 @@ bool Particle::HasFiniteMass() const
 void Particle::ClearForceAccumulator()
 {
 	m_forceAccumulated = Vector3::Zero;
+}
+
+void Particle::SetWorldSpaceRadius(const float& radius)
+{
+	m_worldSpaceRadius = radius;
+}
+
+float Particle::GetWorldSpaceRadius() const
+{
+	return m_worldSpaceRadius;
+}
+
+float Particle::GetBouncinessFactor() const
+{
+	return m_bouncinessFactor;
 }
 
 void Particle::AddForce(const DirectX::SimpleMath::Vector3& force)
