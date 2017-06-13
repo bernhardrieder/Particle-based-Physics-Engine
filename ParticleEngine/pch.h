@@ -103,5 +103,7 @@ namespace DX
 #include "ParticleDragForceGenerator.h"
 #include "ParticleBungeeForceGenerator.h"
 #include "ParticleWorld.h"
-#include "ParticleContacts.h"
+#include "ParticleContact.h"
+#include "ParticleContactResolver.h"
+#include "ParticleContactGenerators.h"
 #include "Platform.h"

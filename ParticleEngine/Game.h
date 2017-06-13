@@ -68,6 +68,7 @@ private:
 
 	std::vector<Particle*> m_particles;
 	std::vector<ParticleForceGenerator*> m_particleForceGenerators;
+	std::vector<ParticleContactGenerator*> m_particleContactGenerators;
 	ParticleRenderer* m_particleRenderer = nullptr;
 	ParticleWorld* m_particleWorld;
 	DirectX::SimpleMath::Vector3 m_particleAnchor[3];

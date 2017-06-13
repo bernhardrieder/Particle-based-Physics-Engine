@@ -30,6 +30,10 @@ Game::~Game()
 	{
 		delete forceGenerator;
 	}
+	for (ParticleContactGenerator* contactGenerator : m_particleContactGenerators)
+	{
+		delete contactGenerator;
+	}
 	for (Platform* platform : m_platforms)
 	{
 		delete platform;
@@ -71,6 +75,7 @@ void Game::Initialize(HWND window, int width, int height)
 		particle->SetMass(static_cast<float>(i));
 		particle->SetVelocity(Vector3::Up * i *(rand() % 20) + Vector3::Left * i *(rand() % 10));
 		particle->SetAcceleration(gravity);
+		particle->SetWorldSpaceRadius(static_cast<float>(i) / 2.f);
 		m_particles.push_back(particle);
 	}
 
@@ -92,6 +97,7 @@ void Game::Initialize(HWND window, int width, int height)
 	anchoredBungeeParticle->SetPosition(m_particleAnchor[0]);
 	anchoredBungeeParticle->SetMass(10);
 	anchoredBungeeParticle->SetAcceleration(gravity);
+	anchoredBungeeParticle->SetWorldSpaceRadius(5);
 	m_particles.push_back(anchoredBungeeParticle);
 	m_particleForceRegistry.Add(anchoredBungeeParticle, anchoredBungeeForceGenerator);
 
@@ -99,6 +105,7 @@ void Game::Initialize(HWND window, int width, int height)
 	anchoredFakeStiffSpringParticle->SetPosition(m_particleAnchor[1]+Vector3::Down*50);
 	anchoredFakeStiffSpringParticle->SetMass(10);
 	anchoredFakeStiffSpringParticle->SetAcceleration(gravity);
+	anchoredFakeStiffSpringParticle->SetWorldSpaceRadius(5);
 	m_particles.push_back(anchoredFakeStiffSpringParticle);
 	m_particleForceRegistry.Add(anchoredFakeStiffSpringParticle, anchoredFakeStiffSpringForceGenerator);
 
@@ -106,6 +113,7 @@ void Game::Initialize(HWND window, int width, int height)
 	anchoredSpringParticle->SetPosition(m_particleAnchor[2]);
 	anchoredSpringParticle->SetMass(10);
 	anchoredSpringParticle->SetAcceleration(gravity);
+	anchoredSpringParticle->SetWorldSpaceRadius(5);
 	m_particles.push_back(anchoredSpringParticle);
 	m_particleForceRegistry.Add(anchoredSpringParticle, anchoredSpringForceGenerator);
 
@@ -119,6 +127,7 @@ void Game::Initialize(HWND window, int width, int height)
 	bungeeParticle->SetPosition(m_particleAnchor[0] + Vector3::UnitX * 25);
 	bungeeParticle->SetMass(10);
 	bungeeParticle->SetAcceleration(gravity);
+	bungeeParticle->SetWorldSpaceRadius(5);
 	m_particles.push_back(bungeeParticle);
 	m_particleForceRegistry.Add(bungeeParticle, bungeeForceGenerator);
 
@@ -126,6 +135,7 @@ void Game::Initialize(HWND window, int width, int height)
 	springParticle->SetPosition(m_particleAnchor[2] + Vector3::UnitX * 25);
 	springParticle->SetMass(10);
 	springParticle->SetAcceleration(gravity);
+	springParticle->SetWorldSpaceRadius(5);
 	m_particles.push_back(springParticle);
 	m_particleForceRegistry.Add(springParticle, springForceGenerator);
 
@@ -133,12 +143,17 @@ void Game::Initialize(HWND window, int width, int height)
 	m_particleRenderer->AddParticle(m_particles);
 
 
-
+	// ---------------------------- PLATFORMS ----------------------------
+	Vector3 platformStartEnd[2] = { Vector3(-100,-100,0), Vector3(100,0,0) };
 	Platform* platform = new Platform();
-	platform->SetColorAndThickness(Colors::Blue, 10);
-	platform->Initialize(Vector3(-100,-100,0), Vector3(100,0,0), m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext());
+	platform->SetColorAndThickness(Colors::Blue, 5);
+	platform->Initialize(platformStartEnd[0], platformStartEnd[1], m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext());
 	m_platforms.push_back(platform);
-
+	
+	ParticlePlatformContactsGenerator* platformContactsGenerator = new ParticlePlatformContactsGenerator(platformStartEnd[0], platformStartEnd[1]);
+	platformContactsGenerator->AddParticle(m_particles);
+	m_particleContactGenerators.push_back(platformContactsGenerator);
+	m_particleWorld->GetContactGenerators().push_back(platformContactsGenerator);
 }
 
 #pragma region Frame Update

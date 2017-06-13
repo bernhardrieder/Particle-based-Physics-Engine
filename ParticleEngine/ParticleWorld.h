@@ -1,6 +1,7 @@
 #pragma once
-#include "ParticleContacts.h"
+#include "ParticleContact.h"
 #include "ParticleContactGenerators.h"
+#include "ParticleContactResolver.h"
 
 class ParticleWorld : public ParticleManagement
 {

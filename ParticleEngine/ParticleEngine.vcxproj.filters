@@ -41,9 +41,10 @@
       <Filter>ForceGenerators</Filter>
     </ClInclude>
     <ClInclude Include="ParticleWorld.h" />
-    <ClInclude Include="ParticleContacts.h" />
     <ClInclude Include="ParticleContactGenerators.h" />
     <ClInclude Include="Platform.h" />
+    <ClInclude Include="ParticleContactResolver.h" />
+    <ClInclude Include="ParticleContact.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -69,9 +70,10 @@
       <Filter>ForceGenerators</Filter>
     </ClCompile>
     <ClCompile Include="ParticleWorld.cpp" />
-    <ClCompile Include="ParticleContacts.cpp" />
     <ClCompile Include="ParticleContactGenerators.cpp" />
     <ClCompile Include="Platform.cpp" />
+    <ClCompile Include="ParticleContactResolver.cpp" />
+    <ClCompile Include="ParticleContact.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />
