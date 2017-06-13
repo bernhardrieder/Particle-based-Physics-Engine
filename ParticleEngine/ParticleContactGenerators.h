@@ -16,7 +16,7 @@ public:
 	* to. The method returns the number of contacts that have
 	* been written.
 	*/
-	virtual int AddContact(ParticleContact *contact, const int& limit) const = 0;
+	virtual int AddContact(ParticleContact* contact, const int& limit) const = 0;
 };
 
 /**
@@ -26,5 +26,23 @@ public:
 class ParticleGroundContactsGenerator : public ParticleContactGenerator, public ParticleManagement
 {
 public:
-	int AddContact(ParticleContact *contact, const int& limit) const override;
+	int AddContact(ParticleContact* contact, const int& limit) const override;
+};
+
+/**
+* Platforms are two dimensional: lines on which the
+* particles can rest. Platforms are also contact generators for the physics.
+*/
+class Platform : public ParticleContactGenerator, public ParticleManagement
+{
+public:
+	Platform();
+	Platform(const DirectX::SimpleMath::Vector3& start, const DirectX::SimpleMath::Vector3& end);
+
+	void Initialize(const DirectX::SimpleMath::Vector3& start, const DirectX::SimpleMath::Vector3& end);
+	int AddContact(ParticleContact* contact, const int& limit) const override;
+
+private:
+	DirectX::SimpleMath::Vector3 m_start = DirectX::SimpleMath::Vector3::Zero;
+	DirectX::SimpleMath::Vector3 m_end = DirectX::SimpleMath::Vector3::Zero;
 };

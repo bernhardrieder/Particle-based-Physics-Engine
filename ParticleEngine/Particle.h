@@ -25,6 +25,12 @@ public:
 	bool HasFiniteMass() const;
 	void ClearForceAccumulator();
 
+	void SetWorldSpaceRadius(const float& radius) { m_worldSpaceRadius = radius; };
+	float GetWorldSpaceRadius() {
+		return m_worldSpaceRadius
+			;
+	}
+
 protected:
 	DirectX::SimpleMath::Vector3 m_position = DirectX::SimpleMath::Vector3::Zero;
 	DirectX::SimpleMath::Vector3 m_velocity = DirectX::SimpleMath::Vector3::Zero;
@@ -35,6 +41,7 @@ protected:
 	float m_damping = 0.99f;
 	float m_mass = 0;
 	float m_inverseMass = 0;
+	float m_worldSpaceRadius;
 };
 
 class ParticleManagement
