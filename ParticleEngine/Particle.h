@@ -48,6 +48,7 @@ class ParticleManagement
 {
 public:
 	void AddParticle(Particle* particle);;
+	void AddParticle(const std::vector<Particle*>& particles);
 	void RemoveParticle(Particle* particle);
 
 protected:

@@ -76,7 +76,7 @@ void ParticleRenderer::SetParticleColor(const DirectX::XMVECTORF32& color)
 
 void ParticleRenderer::createParticlesVertices()
 {
-	std::vector<Vector2> vertices = createCircleVerticesTriangleList(Vector2::Zero, 1);
+	std::vector<Vector2> vertices = createCircleVerticesTriangleList(Vector2::Zero, 0.5f);
 	for (size_t i = 0; i < vertices.size(); ++i)
 		m_vertices.push_back(VertexPositionColor(Vector3(vertices[i].x, vertices[i].y, 0.0f), m_particleColor));
 }
@@ -84,7 +84,7 @@ void ParticleRenderer::createParticlesVertices()
 std::vector<Vector2> ParticleRenderer::createCircleVerticesTriangleList(const DirectX::SimpleMath::Vector2& center, const float& radius) const
 {
 	std::vector<Vector2> vertices;
-	int resolution = 10;
+	int resolution = 50;
 
 	Vector2 vertex0 = center;
 	Vector2 vertex1;

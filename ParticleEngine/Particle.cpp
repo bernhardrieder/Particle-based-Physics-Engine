@@ -100,6 +100,14 @@ void ParticleManagement::AddParticle(Particle* particle)
 	m_particles.push_back(particle);
 }
 
+void ParticleManagement::AddParticle(const std::vector<Particle*>& particles)
+{
+	for(Particle* particle : particles)
+	{
+		AddParticle(particle);
+	}
+}
+
 void ParticleManagement::RemoveParticle(Particle* particle)
 {
 	for (size_t index = 0; index < m_particles.size(); ++index)

@@ -21,7 +21,7 @@ Game::Game()
 Game::~Game()
 {
 	delete m_particleRenderer;
-	delete m_particleForceRegistry;
+	delete m_particleWorld;
 	for(Particle* particle : m_particles)
 	{
 		delete particle;
@@ -55,23 +55,20 @@ void Game::Initialize(HWND window, int width, int height)
 	m_mouse->SetWindow(window);
 	
 	srand(time(nullptr));
-	m_particleForceRegistry = new ParticleForceRegistry();
+	m_particleWorld = new ParticleWorld(50000);
+	ParticleForceRegistry& m_particleForceRegistry = m_particleWorld->GetForceRegistry();
 	m_particleRenderer = new ParticleRenderer(Colors::White);
 	m_particleRenderer->Initialize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext());
-	ParticleGravityForceGenerator* gravityForceGenerator = new ParticleGravityForceGenerator(Vector3::Down * 20);
-	m_particleForceGenerators.push_back(gravityForceGenerator);
-	//for (int i = 1; i <= 10; ++i)
-	//{
-	//	Particle* particle = new Particle();
-	//	particle->SetPosition(Vector3::UnitX * static_cast<float>(i)*10.f);
-	//	particle->SetMass(static_cast<float>(i));
-	//	particle->SetVelocity(Vector3::Up * i *(rand() % 20) + Vector3::Left * i *(rand() % 10));
-
-
-	//	m_particles.push_back(particle);
-	//	m_particleForceRegistry->Add(particle, gravityForceGenerator);
-	//	m_particleRenderer->Add(particle);
-	//}
+	Vector3 gravity = Vector3::Down * 20;
+	for (int i = 1; i <= 10; ++i)
+	{
+		Particle* particle = new Particle();
+		particle->SetPosition(Vector3::UnitX * static_cast<float>(i)*10.f);
+		particle->SetMass(static_cast<float>(i));
+		particle->SetVelocity(Vector3::Up * i *(rand() % 20) + Vector3::Left * i *(rand() % 10));
+		particle->SetAcceleration(gravity);
+		m_particles.push_back(particle);
+	}
 
 	m_particleAnchor[0] = Vector3(-50, 50, 0);
 	m_particleAnchor[1] = Vector3(0, 50, 0);
@@ -90,29 +87,26 @@ void Game::Initialize(HWND window, int width, int height)
 	Particle* anchoredBungeeParticle = new Particle();
 	anchoredBungeeParticle->SetPosition(m_particleAnchor[0]);
 	anchoredBungeeParticle->SetMass(10);
+	anchoredBungeeParticle->SetAcceleration(gravity);
 	m_particles.push_back(anchoredBungeeParticle);
-	m_particleRenderer->AddParticle(anchoredBungeeParticle);
-	m_particleForceRegistry->Add(anchoredBungeeParticle, anchoredBungeeForceGenerator);
-	m_particleForceRegistry->Add(anchoredBungeeParticle, gravityForceGenerator);
+	m_particleForceRegistry.Add(anchoredBungeeParticle, anchoredBungeeForceGenerator);
 
 	Particle* anchoredFakeStiffSpringParticle = new Particle();
 	anchoredFakeStiffSpringParticle->SetPosition(m_particleAnchor[1]+Vector3::Down*50);
 	anchoredFakeStiffSpringParticle->SetMass(10);
+	anchoredFakeStiffSpringParticle->SetAcceleration(gravity);
 	m_particles.push_back(anchoredFakeStiffSpringParticle);
-	m_particleRenderer->AddParticle(anchoredFakeStiffSpringParticle);
-	m_particleForceRegistry->Add(anchoredFakeStiffSpringParticle, anchoredFakeStiffSpringForceGenerator);
-	m_particleForceRegistry->Add(anchoredFakeStiffSpringParticle, gravityForceGenerator);
+	m_particleForceRegistry.Add(anchoredFakeStiffSpringParticle, anchoredFakeStiffSpringForceGenerator);
 
 	Particle* anchoredSpringParticle = new Particle();
 	anchoredSpringParticle->SetPosition(m_particleAnchor[2]);
 	anchoredSpringParticle->SetMass(10);
+	anchoredSpringParticle->SetAcceleration(gravity);
 	m_particles.push_back(anchoredSpringParticle);
-	m_particleRenderer->AddParticle(anchoredSpringParticle);
-	m_particleForceRegistry->Add(anchoredSpringParticle, anchoredSpringForceGenerator);
-	m_particleForceRegistry->Add(anchoredSpringParticle, gravityForceGenerator);
+	m_particleForceRegistry.Add(anchoredSpringParticle, anchoredSpringForceGenerator);
 
 
-	ParticleBungeeForceGenerator* bungeeForceGenerator = new ParticleBungeeForceGenerator(anchoredFakeStiffSpringParticle, springConstant/2.f, restLength/2.f);
+	ParticleBungeeForceGenerator* bungeeForceGenerator = new ParticleBungeeForceGenerator(anchoredBungeeParticle, springConstant/2.f, restLength/2.f);
 	ParticleSpringForceGenerator* springForceGenerator = new ParticleSpringForceGenerator(anchoredSpringParticle, springConstant/2.f, restLength/2.f);
 	m_particleForceGenerators.push_back(bungeeForceGenerator);
 	m_particleForceGenerators.push_back(springForceGenerator);
@@ -120,18 +114,19 @@ void Game::Initialize(HWND window, int width, int height)
 	Particle* bungeeParticle = new Particle();
 	bungeeParticle->SetPosition(m_particleAnchor[0] + Vector3::UnitX * 25);
 	bungeeParticle->SetMass(10);
+	bungeeParticle->SetAcceleration(gravity);
 	m_particles.push_back(bungeeParticle);
-	m_particleRenderer->AddParticle(bungeeParticle);
-	m_particleForceRegistry->Add(bungeeParticle, bungeeForceGenerator);
-	m_particleForceRegistry->Add(bungeeParticle, gravityForceGenerator);
+	m_particleForceRegistry.Add(bungeeParticle, bungeeForceGenerator);
 
 	Particle* springParticle = new Particle();
 	springParticle->SetPosition(m_particleAnchor[2] + Vector3::UnitX * 25);
 	springParticle->SetMass(10);
+	springParticle->SetAcceleration(gravity);
 	m_particles.push_back(springParticle);
-	m_particleRenderer->AddParticle(springParticle);
-	m_particleForceRegistry->Add(springParticle, springForceGenerator);
-	m_particleForceRegistry->Add(springParticle, gravityForceGenerator);
+	m_particleForceRegistry.Add(springParticle, springForceGenerator);
+
+	m_particleWorld->AddParticle(m_particles);
+	m_particleRenderer->AddParticle(m_particles);
 }
 
 #pragma region Frame Update
@@ -142,7 +137,6 @@ void Game::Tick()
 	{
 		Update(m_timer);
 	});
-
 	Render();
 }
 
@@ -152,7 +146,7 @@ void Game::Update(DX::StepTimer const& timer)
 	float elapsedTime = float(timer.GetElapsedSeconds());
 
 	// TODO: Add your game logic here.
-	(void)elapsedTime;
+	m_particleWorld->StartFrame();
 
 	auto kb = m_keyboard->GetState();
 	if (kb.Escape)
@@ -161,11 +155,7 @@ void Game::Update(DX::StepTimer const& timer)
 	checkAndProcessKeyboardInput(elapsedTime);
 	checkAndProcessMouseInput(elapsedTime);
 
-	m_particleForceRegistry->UpdateForces(elapsedTime);
-	for(Particle* particle : m_particles)
-	{
-		particle->Integrate(elapsedTime);
-	}
+	m_particleWorld->RunPhysics(elapsedTime);
 
 	m_camera.UpdateViewMatrix();
 }
