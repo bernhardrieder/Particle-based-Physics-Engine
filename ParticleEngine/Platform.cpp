@@ -83,6 +83,6 @@ void Platform::createVertices(const DirectX::SimpleMath::Vector3& start, const D
 	vertices[5] = vertices[2] + dir;
 	for(const Vector3& vertex : vertices)
 	{
-		m_vertices.push_back(VertexPositionColor(Vector3(vertex.x, vertex.y, 0.0f), m_color));
+		m_vertices.push_back(VertexPositionColor(Vector3(vertex.x, vertex.y, -0.1f), m_color));
 	}
 }

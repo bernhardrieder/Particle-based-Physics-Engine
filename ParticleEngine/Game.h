@@ -66,11 +66,11 @@ private:
 	std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionColor>> m_batch;
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> m_inputLayout;
 
-	std::vector<Particle*> m_particles;
 	std::vector<ParticleForceGenerator*> m_particleForceGenerators;
 	std::vector<ParticleContactGenerator*> m_particleContactGenerators;
 	ParticleRenderer* m_particleRenderer = nullptr;
 	ParticleWorld* m_particleWorld;
 	DirectX::SimpleMath::Vector3 m_particleAnchor[3];
 	std::vector<Platform*> m_platforms;
+	std::vector<BlizzardParticleEmitter*> m_blizzardParticleEmitter;
 };

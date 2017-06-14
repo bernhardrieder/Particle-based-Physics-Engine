@@ -4,7 +4,7 @@
 * This is the basic polymorphic interface for contact generators
 * applying to particles.
 */
-class ParticleContactGenerator
+class ParticleContactGenerator : public ParticleManagement
 {
 public:
 	virtual ~ParticleContactGenerator() = default;
@@ -23,7 +23,7 @@ public:
 * A contact generator that takes an STL vector of particle pointers and
 * collides them against the ground.
 */
-class ParticleGroundContactsGenerator : public ParticleContactGenerator, public ParticleManagement
+class ParticleGroundContactsGenerator : public ParticleContactGenerator
 {
 public:
 	int AddContact(ParticleContact* contact, const int& limit) const override;
@@ -33,7 +33,7 @@ public:
 * Platforms are two dimensional: lines on which the
 * particles can rest. Platforms are also contact generators for the physics.
 */
-class ParticlePlatformContactsGenerator : public ParticleContactGenerator, public ParticleManagement
+class ParticlePlatformContactsGenerator : public ParticleContactGenerator
 {
 public:
 	ParticlePlatformContactsGenerator();
@@ -47,7 +47,7 @@ private:
 	DirectX::SimpleMath::Vector3 m_end = DirectX::SimpleMath::Vector3::Zero;
 };
 
-class ParticleParticleContactGenerator : public ParticleContactGenerator, public ParticleManagement
+class ParticleParticleContactGenerator : public ParticleContactGenerator
 {
 public:
 	int AddContact(ParticleContact* contact, const int& limit) const override;

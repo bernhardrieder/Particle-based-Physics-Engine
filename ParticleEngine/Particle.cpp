@@ -138,3 +138,19 @@ void ParticleManagement::RemoveParticle(Particle* particle)
 		}
 	}
 }
+
+std::vector<Particle*>& ParticleManagement::GetParticles()
+{
+	return m_particles;
+}
+
+void ParticleManagement::removeInvalidParticles()
+{
+	for (size_t index = 0; index < m_particles.size(); ++index)
+	{
+		if (m_particles[index] == nullptr)
+		{
+			m_particles.erase(m_particles.begin() + index);
+		}
+	}
+}

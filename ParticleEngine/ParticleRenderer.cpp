@@ -55,7 +55,7 @@ void ParticleRenderer::Render(ID3D11DeviceContext* deviceContext, const Camera& 
 	for(Particle* particle : m_particles)
 	{
 		assert(particle != nullptr && "particle is nullptr!");
-		Matrix scale = Matrix::CreateScale(particle->GetMass());
+		Matrix scale = Matrix::CreateScale(particle->GetWorldSpaceRadius()*2);
 		Matrix world = Matrix::CreateTranslation(particle->GetPosition());
 
 		m_batch->Begin();

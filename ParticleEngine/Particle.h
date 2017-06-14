@@ -48,10 +48,13 @@ protected:
 class ParticleManagement
 {
 public:
-	void AddParticle(Particle* particle);;
+	void AddParticle(Particle* particle);
 	void AddParticle(const std::vector<Particle*>& particles);
 	void RemoveParticle(Particle* particle);
+	std::vector<Particle*>& GetParticles();
 
 protected:
+	void removeInvalidParticles();
+
 	std::vector<Particle*> m_particles;
 };

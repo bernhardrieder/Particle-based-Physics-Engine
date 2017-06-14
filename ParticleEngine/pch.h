@@ -107,3 +107,4 @@ namespace DX
 #include "ParticleContactResolver.h"
 #include "ParticleContactGenerators.h"
 #include "Platform.h"
+#include "BlizzardParticleEmitter.h"

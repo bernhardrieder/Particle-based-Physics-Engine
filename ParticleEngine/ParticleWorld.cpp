@@ -11,6 +11,10 @@ ParticleWorld::ParticleWorld(const int& maxContactsPerFrame, const int& contactR
 ParticleWorld::~ParticleWorld()
 {
 	delete[] m_contacts;
+	for(Particle* particle : m_particles)
+	{
+		delete particle;
+	}
 }
 
 void ParticleWorld::StartFrame()

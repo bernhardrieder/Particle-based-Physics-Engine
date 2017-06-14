@@ -45,6 +45,7 @@
     <ClInclude Include="Platform.h" />
     <ClInclude Include="ParticleContactResolver.h" />
     <ClInclude Include="ParticleContact.h" />
+    <ClInclude Include="BlizzardParticleEmitter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -74,6 +75,7 @@
     <ClCompile Include="Platform.cpp" />
     <ClCompile Include="ParticleContactResolver.cpp" />
     <ClCompile Include="ParticleContact.cpp" />
+    <ClCompile Include="BlizzardParticleEmitter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />
