@@ -1,4 +1,12 @@
 #pragma once
+
+enum class ParticleTypes : int
+{
+	None,
+	Ball,
+	Snow
+};
+
 class Particle
 {
 public:
@@ -31,8 +39,11 @@ public:
 	void SetWorldSpaceRadius(const float& radius);
 	float GetWorldSpaceRadius() const;
 
-	void SetActive(bool active) { m_active = active; }
-	bool IsActive() const { return m_active; }
+	void SetActive(bool active);
+	bool IsActive() const;
+
+	void SetType(ParticleTypes type);
+	ParticleTypes GetType() const;
 
 protected:
 	DirectX::SimpleMath::Vector3 m_position = DirectX::SimpleMath::Vector3::Zero;
@@ -46,7 +57,8 @@ protected:
 	float m_inverseMass = 0;
 	float m_worldSpaceRadius = 1;
 	float m_bouncinessFactor = 0.1f;
-	bool m_active = false;
+	bool m_isActive = false;
+	ParticleTypes m_type;
 };
 
 class ParticleManagement

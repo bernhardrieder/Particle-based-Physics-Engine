@@ -105,6 +105,26 @@ float Particle::GetWorldSpaceRadius() const
 	return m_worldSpaceRadius;
 }
 
+void Particle::SetActive(bool active)
+{
+	m_isActive = active;
+}
+
+bool Particle::IsActive() const
+{
+	return m_isActive;
+}
+
+void Particle::SetType(ParticleTypes type)
+{
+	m_type = type;
+}
+
+ParticleTypes Particle::GetType() const
+{
+	return m_type;
+}
+
 float Particle::GetBouncinessFactor() const
 {
 	return m_bouncinessFactor;

@@ -139,6 +139,19 @@ int ParticleParticleContactGenerator::AddContact(ParticleContact* contact, const
 			if (particlePairUsed(usedParticles, particle, other))
 				continue;
 
+			//todo: try to convert the following 10 lines into a non hardcoded style!
+			if(particle->GetType() == ParticleTypes::Ball && other->GetType() == ParticleTypes::Snow)
+			{
+				other->SetActive(false);
+				continue;
+			}
+			if(other->GetType() == ParticleTypes::Ball && particle->GetType() == ParticleTypes::Snow)
+			{
+				particle->SetActive(false);
+				continue;
+			}
+
+
 			Vector3 normal = midline * (1.f / size);
 			normal.Normalize();
 

@@ -79,6 +79,7 @@ void Game::Initialize(HWND window, int width, int height)
 		particle->SetAcceleration(gravity);
 		particle->SetWorldSpaceRadius(static_cast<float>(i) / 2.f);
 		particle->SetBouncinessFactor(0.2f);
+		particle->SetType(ParticleTypes::Ball);
 	}
 
 	m_particleAnchor[0] = Vector3(-50, 50, 0);
@@ -99,21 +100,24 @@ void Game::Initialize(HWND window, int width, int height)
 	anchoredBungeeParticle->SetPosition(m_particleAnchor[0]);
 	anchoredBungeeParticle->SetMass(10);
 	anchoredBungeeParticle->SetAcceleration(gravity);
-	anchoredBungeeParticle->SetWorldSpaceRadius(5);
+	anchoredBungeeParticle->SetWorldSpaceRadius(10);
+	anchoredBungeeParticle->SetType(ParticleTypes::Ball);
 	m_particleForceRegistry.Add(anchoredBungeeParticle, anchoredBungeeForceGenerator);
 
 	Particle* anchoredFakeStiffSpringParticle = m_particleWorld->GetNewParticle();
 	anchoredFakeStiffSpringParticle->SetPosition(m_particleAnchor[1]+Vector3::Down*50);
 	anchoredFakeStiffSpringParticle->SetMass(10);
 	anchoredFakeStiffSpringParticle->SetAcceleration(gravity);
-	anchoredFakeStiffSpringParticle->SetWorldSpaceRadius(5);
+	anchoredFakeStiffSpringParticle->SetWorldSpaceRadius(10);
+	anchoredFakeStiffSpringParticle->SetType(ParticleTypes::Ball);
 	m_particleForceRegistry.Add(anchoredFakeStiffSpringParticle, anchoredFakeStiffSpringForceGenerator);
 
 	Particle* anchoredSpringParticle = m_particleWorld->GetNewParticle();
 	anchoredSpringParticle->SetPosition(m_particleAnchor[2]);
 	anchoredSpringParticle->SetMass(10);
 	anchoredSpringParticle->SetAcceleration(gravity);
-	anchoredSpringParticle->SetWorldSpaceRadius(5);
+	anchoredSpringParticle->SetWorldSpaceRadius(10);
+	anchoredSpringParticle->SetType(ParticleTypes::Ball);
 	m_particleForceRegistry.Add(anchoredSpringParticle, anchoredSpringForceGenerator);
 
 
@@ -126,14 +130,16 @@ void Game::Initialize(HWND window, int width, int height)
 	bungeeParticle->SetPosition(m_particleAnchor[0] + Vector3::UnitX * 25);
 	bungeeParticle->SetMass(10);
 	bungeeParticle->SetAcceleration(gravity);
-	bungeeParticle->SetWorldSpaceRadius(5);
+	bungeeParticle->SetWorldSpaceRadius(10);
+	bungeeParticle->SetType(ParticleTypes::Ball);
 	m_particleForceRegistry.Add(bungeeParticle, bungeeForceGenerator);
 
 	Particle* springParticle = m_particleWorld->GetNewParticle();
 	springParticle->SetPosition(m_particleAnchor[2] + Vector3::UnitX * 25);
 	springParticle->SetMass(10);
 	springParticle->SetAcceleration(gravity);
-	springParticle->SetWorldSpaceRadius(5);
+	springParticle->SetWorldSpaceRadius(10);
+	springParticle->SetType(ParticleTypes::Ball);
 	m_particleForceRegistry.Add(springParticle, springForceGenerator);
 
 
