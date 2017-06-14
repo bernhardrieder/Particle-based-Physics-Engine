@@ -4,7 +4,8 @@ enum class ParticleTypes : int
 {
 	None,
 	Ball,
-	Snow
+	Snow,
+	Cloth
 };
 
 class Particle

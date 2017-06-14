@@ -73,4 +73,6 @@ private:
 	DirectX::SimpleMath::Vector3 m_particleAnchor[3];
 	std::vector<Platform*> m_platforms;
 	std::vector<BlizzardParticleEmitter*> m_blizzardParticleEmitter;
+	DirectX::SimpleMath::Vector3 m_gravity = DirectX::SimpleMath::Vector3::Down * 20;
+
 };

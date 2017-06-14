@@ -21,11 +21,15 @@ public:
 	Particle* GetNewParticle();
 	void ReleaseParticle(Particle* particle);
 
+	void DestroyAllSnow();
+	void DestroyAllBalls();
+
 protected:
 	void createPool(const int& poolSize);
 	static void removeInactiveParticles(std::vector<Particle*>& particles);
 	void releaseInactiveParticles();
 	void disableActiveParticleOutOfLevelBounds();
+	void destroy(ParticleTypes type);
 
 	std::vector<Particle*> m_particlePool;
 	std::vector<Particle*> m_activeParticles;

@@ -160,3 +160,23 @@ void ParticleWorld::disableActiveParticleOutOfLevelBounds()
 		}
 	}
 }
+
+void ParticleWorld::destroy(ParticleTypes type)
+{
+	for (Particle* particle : m_activeParticles)
+	{
+		if (particle->GetType() == type)
+			particle->SetActive(false);
+	}
+	removeInactiveParticles(m_activeParticles);
+}
+
+void ParticleWorld::DestroyAllSnow()
+{
+	destroy(ParticleTypes::Snow);
+}
+
+void ParticleWorld::DestroyAllBalls()
+{
+	destroy(ParticleTypes::Ball);
+}

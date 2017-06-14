@@ -69,18 +69,6 @@ void Game::Initialize(HWND window, int width, int height)
 	ParticleForceRegistry& m_particleForceRegistry = m_particleWorld->GetForceRegistry();
 	m_particleRenderer = new ParticleRenderer(Colors::White);
 	m_particleRenderer->Initialize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), m_particleWorld);
-	Vector3 gravity = Vector3::Down * 10;
-	for (int i = 1; i <= 10; ++i)
-	{
-		Particle* particle = m_particleWorld->GetNewParticle();
-		particle->SetPosition(Vector3::UnitX * static_cast<float>(i)*10.f);
-		particle->SetMass(static_cast<float>(i));
-		particle->SetVelocity(Vector3::Up * i *(rand() % 20) + Vector3::Left * i *(rand() % 10));
-		particle->SetAcceleration(gravity);
-		particle->SetWorldSpaceRadius(static_cast<float>(i) / 2.f);
-		particle->SetBouncinessFactor(0.2f);
-		particle->SetType(ParticleTypes::Ball);
-	}
 
 	m_particleAnchor[0] = Vector3(-50, 50, 0);
 	m_particleAnchor[1] = Vector3(0, 50, 0);
@@ -99,25 +87,25 @@ void Game::Initialize(HWND window, int width, int height)
 	Particle* anchoredBungeeParticle = m_particleWorld->GetNewParticle();
 	anchoredBungeeParticle->SetPosition(m_particleAnchor[0]);
 	anchoredBungeeParticle->SetMass(10);
-	anchoredBungeeParticle->SetAcceleration(gravity);
+	anchoredBungeeParticle->SetAcceleration(m_gravity);
 	anchoredBungeeParticle->SetWorldSpaceRadius(10);
-	anchoredBungeeParticle->SetType(ParticleTypes::Ball);
+	anchoredBungeeParticle->SetType(ParticleTypes::Cloth);
 	m_particleForceRegistry.Add(anchoredBungeeParticle, anchoredBungeeForceGenerator);
 
 	Particle* anchoredFakeStiffSpringParticle = m_particleWorld->GetNewParticle();
 	anchoredFakeStiffSpringParticle->SetPosition(m_particleAnchor[1]+Vector3::Down*50);
 	anchoredFakeStiffSpringParticle->SetMass(10);
-	anchoredFakeStiffSpringParticle->SetAcceleration(gravity);
+	anchoredFakeStiffSpringParticle->SetAcceleration(m_gravity);
 	anchoredFakeStiffSpringParticle->SetWorldSpaceRadius(10);
-	anchoredFakeStiffSpringParticle->SetType(ParticleTypes::Ball);
+	anchoredFakeStiffSpringParticle->SetType(ParticleTypes::Cloth);
 	m_particleForceRegistry.Add(anchoredFakeStiffSpringParticle, anchoredFakeStiffSpringForceGenerator);
 
 	Particle* anchoredSpringParticle = m_particleWorld->GetNewParticle();
 	anchoredSpringParticle->SetPosition(m_particleAnchor[2]);
 	anchoredSpringParticle->SetMass(10);
-	anchoredSpringParticle->SetAcceleration(gravity);
+	anchoredSpringParticle->SetAcceleration(m_gravity);
 	anchoredSpringParticle->SetWorldSpaceRadius(10);
-	anchoredSpringParticle->SetType(ParticleTypes::Ball);
+	anchoredSpringParticle->SetType(ParticleTypes::Cloth);
 	m_particleForceRegistry.Add(anchoredSpringParticle, anchoredSpringForceGenerator);
 
 
@@ -129,17 +117,17 @@ void Game::Initialize(HWND window, int width, int height)
 	Particle* bungeeParticle = m_particleWorld->GetNewParticle();
 	bungeeParticle->SetPosition(m_particleAnchor[0] + Vector3::UnitX * 25);
 	bungeeParticle->SetMass(10);
-	bungeeParticle->SetAcceleration(gravity);
+	bungeeParticle->SetAcceleration(m_gravity);
 	bungeeParticle->SetWorldSpaceRadius(10);
-	bungeeParticle->SetType(ParticleTypes::Ball);
+	bungeeParticle->SetType(ParticleTypes::Cloth);
 	m_particleForceRegistry.Add(bungeeParticle, bungeeForceGenerator);
 
 	Particle* springParticle = m_particleWorld->GetNewParticle();
 	springParticle->SetPosition(m_particleAnchor[2] + Vector3::UnitX * 25);
 	springParticle->SetMass(10);
-	springParticle->SetAcceleration(gravity);
+	springParticle->SetAcceleration(m_gravity);
 	springParticle->SetWorldSpaceRadius(10);
-	springParticle->SetType(ParticleTypes::Ball);
+	springParticle->SetType(ParticleTypes::Cloth);
 	m_particleForceRegistry.Add(springParticle, springForceGenerator);
 
 
@@ -177,8 +165,8 @@ void Game::Initialize(HWND window, int width, int height)
 		manageParticleIn.push_back(contactGenerator);
 	}
 	//manageParticleIn.pop_back();
-	m_blizzardParticleEmitter.push_back(new BlizzardParticleEmitter(m_particleWorld, manageParticleIn, gravity, Vector3(-width / 4, height / 4, 0), 1500));
-	m_blizzardParticleEmitter.push_back(new BlizzardParticleEmitter(m_particleWorld, manageParticleIn, gravity, Vector3(width / 4, height / 4, 0), -1500));
+	m_blizzardParticleEmitter.push_back(new BlizzardParticleEmitter(m_particleWorld, manageParticleIn, m_gravity, Vector3(-width / 4, height / 4, 0), 1500));
+	m_blizzardParticleEmitter.push_back(new BlizzardParticleEmitter(m_particleWorld, manageParticleIn, m_gravity, Vector3(width / 4, height / 4, 0), -1500));
 	
 }
 
@@ -223,6 +211,34 @@ void Game::checkAndProcessKeyboardInput(const float& deltaTime)
 	auto kb = m_keyboard->GetState();
 	if (kb.Escape)
 		PostQuitMessage(0);
+
+	if(kb.IsKeyDown(Keyboard::Keys::F1))
+	{
+		m_particleWorld->DestroyAllSnow();
+	}
+	if (kb.IsKeyDown(Keyboard::Keys::F2))
+	{
+		m_particleWorld->DestroyAllBalls();
+	}
+
+	if(kb.IsKeyDown(Keyboard::Keys::Q))
+	{
+		for (int i = 1; i <= 25; ++i)
+		{
+			Particle* particle = m_particleWorld->GetNewParticle();
+			particle->SetPosition(Vector3(-200,0,0) + Vector3::UnitX * static_cast<float>(i)*10.f);
+			particle->SetMass(10);
+			particle->SetVelocity(Vector3::Up * i *(rand() % 20) + Vector3::Left * i *(rand() % 10));
+			particle->SetAcceleration(m_gravity);
+			particle->SetWorldSpaceRadius(particle->GetMass());
+			particle->SetBouncinessFactor(0.2f);
+			particle->SetType(ParticleTypes::Ball);
+			for(ParticleContactGenerator* particleGenerator : m_particleContactGenerators)
+			{
+				particleGenerator->AddParticle(particle);
+			}
+		}
+	}
 }
 
 void Game::checkAndProcessMouseInput(const float& deltaTime)

@@ -139,19 +139,15 @@ int ParticleParticleContactGenerator::AddContact(ParticleContact* contact, const
 			if (particlePairUsed(usedParticles, particle, other))
 				continue;
 
-			//todo: try to convert the following 10 lines into a non hardcoded style!
-			if(particle->GetType() == ParticleTypes::Ball && other->GetType() == ParticleTypes::Snow)
+			bool destroyParticle, destroyOther;
+			shouldBeDestroyed(particle, other, destroyParticle, destroyOther);
+			if(destroyOther || destroyParticle)
 			{
-				other->SetActive(false);
+				particle->SetActive(!destroyParticle);
+				other->SetActive(!destroyOther);
 				continue;
 			}
-			if(other->GetType() == ParticleTypes::Ball && particle->GetType() == ParticleTypes::Snow)
-			{
-				particle->SetActive(false);
-				continue;
-			}
-
-
+			
 			Vector3 normal = midline * (1.f / size);
 			normal.Normalize();
 
@@ -181,4 +177,35 @@ bool ParticleParticleContactGenerator::particlePairUsed(const std::vector<std::t
 			return true;
 	}
 	return false;
+}
+
+void ParticleParticleContactGenerator::shouldBeDestroyed(Particle* lhs, Particle* rhs, bool& outDestroyLhs, bool& outDestroyRhs)
+{
+	//todo: try to convert this into a non hardcoded style!
+	outDestroyLhs = false;
+	outDestroyRhs = false;
+	
+	//BALL VS SNOW
+	if (lhs->GetType() == ParticleTypes::Ball && rhs->GetType() == ParticleTypes::Snow)
+	{
+		outDestroyRhs = true;
+		return;
+	}
+	if (rhs->GetType() == ParticleTypes::Ball && lhs->GetType() == ParticleTypes::Snow)
+	{
+		outDestroyLhs = true;
+		return;
+	}
+	
+	//CLOTH VS SNOW
+	if (lhs->GetType() == ParticleTypes::Cloth && rhs->GetType() == ParticleTypes::Snow)
+	{
+		outDestroyRhs = true;
+		return;
+	}
+	if (rhs->GetType() == ParticleTypes::Cloth && lhs->GetType() == ParticleTypes::Snow)
+	{
+		outDestroyLhs = true;
+		return;
+	}
 }
