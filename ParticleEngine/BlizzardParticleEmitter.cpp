@@ -3,8 +3,8 @@
 
 using namespace DirectX::SimpleMath;
 
-BlizzardParticleEmitter::BlizzardParticleEmitter(const std::vector<ParticleManagement*>& manageParticlesInThis, const DirectX::SimpleMath::Vector3& gravity, const DirectX::SimpleMath::Vector3& position, const float& rotationSpeed)
-	: m_manageParticlesInThis(manageParticlesInThis), m_position(position), m_gravity(gravity), m_rotationSpeed(rotationSpeed)
+BlizzardParticleEmitter::BlizzardParticleEmitter(ParticleWorld* particleWorld, const std::vector<ParticleManagement*>& manageParticlesInThis, const DirectX::SimpleMath::Vector3& gravity, const DirectX::SimpleMath::Vector3& position, const float& rotationSpeed)
+	: m_particleWorld(particleWorld), m_manageParticlesInThis(manageParticlesInThis), m_position(position), m_gravity(gravity), m_rotationSpeed(rotationSpeed)
 {
 }
 
@@ -36,15 +36,15 @@ void BlizzardParticleEmitter::SetRotationSpeed(const float rotationSpeed)
 
 void BlizzardParticleEmitter::emitParticle()
 {
-	//todo: create pool
-	Particle* particle = new Particle();
+	Particle* particle = m_particleWorld->GetNewParticle();
+	if (!particle)
+		return;
 	particle->SetPosition(m_position);
-	particle->SetMass(1);
-	particle->SetVelocity(m_currentEmitDirection*100);
+	particle->SetMass(2);
+	particle->SetVelocity(m_currentEmitDirection*50);
 	particle->SetAcceleration(m_gravity);
-	particle->SetWorldSpaceRadius(1);
+	particle->SetWorldSpaceRadius(particle->GetMass());
 	particle->SetBouncinessFactor(0.0f);
-	m_particles.push_back(particle);
 
 	for(auto& particleManager : m_manageParticlesInThis)
 	{

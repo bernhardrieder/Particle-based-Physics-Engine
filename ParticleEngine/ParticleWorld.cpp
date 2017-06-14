@@ -1,17 +1,24 @@
 #include "pch.h"
 #include "ParticleWorld.h"
 
-ParticleWorld::ParticleWorld(const int& maxContactsPerFrame, const int& contactResolutionIterations): m_contactResolver(contactResolutionIterations),
-                                                                                                      m_maxContacts(maxContactsPerFrame)
+using namespace DirectX::SimpleMath;
+
+ParticleWorld::ParticleWorld(const int& maxContactsPerFrame, const int& poolSize, const DirectX::SimpleMath::Vector2& levelBounds, const int& contactResolutionIterations) 
+: m_contactResolver(contactResolutionIterations), m_maxContacts(maxContactsPerFrame), m_levelBounds(levelBounds)
 {
 	m_contacts = new ParticleContact[maxContactsPerFrame];
 	m_shouldCalculateIterations = (contactResolutionIterations == 0);
+	createPool(poolSize);
 }
 
 ParticleWorld::~ParticleWorld()
 {
 	delete[] m_contacts;
-	for(Particle* particle : m_particles)
+	for(Particle* particle : m_activeParticles)
+	{
+		delete particle;
+	}
+	for (Particle* particle : m_particlePool)
 	{
 		delete particle;
 	}
@@ -19,7 +26,9 @@ ParticleWorld::~ParticleWorld()
 
 void ParticleWorld::StartFrame()
 {
-	for (Particle* particle : m_particles)
+	disableActiveParticleOutOfLevelBounds();
+	releaseInactiveParticles();
+	for (Particle* particle : m_activeParticles)
 	{
 		particle->ClearForceAccumulator();
 	}
@@ -49,7 +58,7 @@ void ParticleWorld::RunPhysics(const float& deltaTime)
 
 void ParticleWorld::IntegrateAllParticles(const float& deltaTime)
 {
-	for (Particle* particle : m_particles)
+	for (Particle* particle : m_activeParticles)
 	{
 		particle->Integrate(deltaTime);
 	}
@@ -62,7 +71,8 @@ int ParticleWorld::GenerateContactsWithRegisteredContactGeneratorsAndReturnNumOf
 
 	for (ParticleContactGenerator* contactGenerator : m_contactGenerators)
 	{
-		unsigned used = contactGenerator->AddContact(nextContact, limitOfContacts);
+		removeInactiveParticles(contactGenerator->GetParticles());
+		int used = contactGenerator->AddContact(nextContact, limitOfContacts);
 		limitOfContacts -= used;
 		nextContact += used;
 
@@ -75,9 +85,9 @@ int ParticleWorld::GenerateContactsWithRegisteredContactGeneratorsAndReturnNumOf
 	return m_maxContacts - limitOfContacts;
 }
 
-std::vector<Particle*>& ParticleWorld::GetParticles()
+std::vector<Particle*>& ParticleWorld::GetActiveParticles()
 {
-	return m_particles;
+	return m_activeParticles;
 }
 
 std::vector<ParticleContactGenerator*>& ParticleWorld::GetContactGenerators()
@@ -88,4 +98,65 @@ std::vector<ParticleContactGenerator*>& ParticleWorld::GetContactGenerators()
 ParticleForceRegistry& ParticleWorld::GetForceRegistry()
 {
 	return m_registry;
+}
+
+Particle* ParticleWorld::GetNewParticle()
+{
+	if (m_particlePool.size() <= 0)
+		return nullptr;
+
+	Particle* particle = m_particlePool.back();
+	m_particlePool.pop_back();
+	particle->SetActive(true);
+	m_activeParticles.push_back(particle);
+	return particle;
+}
+
+void ParticleWorld::ReleaseParticle(Particle* particle)
+{
+	particle->SetActive(false);
+	removeInactiveParticles(m_activeParticles);
+	m_particlePool.push_back(particle);
+}
+
+void ParticleWorld::createPool(const int& poolSize)
+{
+	for(int i = 0; i < poolSize; ++i)
+	{
+		m_particlePool.push_back(new Particle);
+	}
+}
+
+void ParticleWorld::removeInactiveParticles(std::vector<Particle*>& particles)
+{
+	for (std::vector<Particle*>::iterator it = particles.begin(); it != particles.end();) 
+	{
+		if (!(*it)->IsActive())
+			it = particles.erase(it);
+		else
+			++it;
+	}
+}
+
+void ParticleWorld::releaseInactiveParticles()
+{
+	for (Particle* particle : m_activeParticles)
+	{
+		if (!particle->IsActive())	
+			m_particlePool.push_back(particle);
+	}
+	removeInactiveParticles(m_activeParticles);
+}
+
+void ParticleWorld::disableActiveParticleOutOfLevelBounds()
+{
+	for (Particle* particle : m_activeParticles)
+	{
+		Vector3 pos = particle->GetPosition();
+		if(pos.x < -m_levelBounds.x || pos.x > m_levelBounds.x || 
+			pos.y < -m_levelBounds.y || pos.y > m_levelBounds.y)
+		{
+			particle->SetActive(false);
+		}
+	}
 }

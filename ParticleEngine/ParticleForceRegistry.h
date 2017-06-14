@@ -14,6 +14,8 @@ public:
 	void UpdateForces(const float& deltaTime);
 
 protected:
+	void removeInactiveParticle();
+
 	struct ParticleForceRegistration
 	{
 		Particle* Particle;

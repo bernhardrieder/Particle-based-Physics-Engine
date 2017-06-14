@@ -28,8 +28,11 @@ public:
 	bool HasFiniteMass() const;
 	void ClearForceAccumulator();
 
-	void SetWorldSpaceRadius(const float& radius);;
+	void SetWorldSpaceRadius(const float& radius);
 	float GetWorldSpaceRadius() const;
+
+	void SetActive(bool active) { m_active = active; }
+	bool IsActive() const { return m_active; }
 
 protected:
 	DirectX::SimpleMath::Vector3 m_position = DirectX::SimpleMath::Vector3::Zero;
@@ -43,6 +46,7 @@ protected:
 	float m_inverseMass = 0;
 	float m_worldSpaceRadius = 1;
 	float m_bouncinessFactor = 0.1f;
+	bool m_active = false;
 };
 
 class ParticleManagement
@@ -54,7 +58,5 @@ public:
 	std::vector<Particle*>& GetParticles();
 
 protected:
-	void removeInvalidParticles();
-
 	std::vector<Particle*> m_particles;
 };

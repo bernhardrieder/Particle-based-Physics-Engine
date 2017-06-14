@@ -1,9 +1,9 @@
 #pragma once
-class BlizzardParticleEmitter : ParticleManagement
+class BlizzardParticleEmitter
 {
 public:
 	BlizzardParticleEmitter() = delete;
-	BlizzardParticleEmitter(const std::vector<ParticleManagement*>& manageParticlesInThis, const DirectX::SimpleMath::Vector3& gravity, const DirectX::SimpleMath::Vector3& position, const float& rotationSpeed);
+	BlizzardParticleEmitter(ParticleWorld* particleWorld, const std::vector<ParticleManagement*>& manageParticlesInThis, const DirectX::SimpleMath::Vector3& gravity, const DirectX::SimpleMath::Vector3& position, const float& rotationSpeed);
 	~BlizzardParticleEmitter();
 	
 	void Update(const float& deltaTime);
@@ -15,6 +15,7 @@ public:
 private:
 	void emitParticle();
 
+	ParticleWorld* m_particleWorld;
 	std::vector<ParticleManagement*> m_manageParticlesInThis;
 	DirectX::SimpleMath::Vector3 m_position;
 	DirectX::SimpleMath::Vector3 m_gravity;

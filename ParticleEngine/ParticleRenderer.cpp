@@ -21,7 +21,7 @@ ParticleRenderer::~ParticleRenderer()
 	m_inputLayout.Reset();
 }
 
-void ParticleRenderer::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext)
+void ParticleRenderer::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, ParticleWorld* particleWorld)
 {
 	m_batch = std::make_unique<PrimitiveBatch<VertexPositionColor>>(deviceContext);
 	m_states = std::make_unique<CommonStates>(device);
@@ -42,6 +42,7 @@ void ParticleRenderer::Initialize(ID3D11Device* device, ID3D11DeviceContext* dev
 			m_inputLayout.ReleaseAndGetAddressOf()));
 
 	//other
+	m_particleWorld = particleWorld;
 	createParticlesVertices();
 }
 
@@ -52,7 +53,7 @@ void ParticleRenderer::Render(ID3D11DeviceContext* deviceContext, const Camera& 
 	deviceContext->RSSetState(m_states->CullNone());
 	deviceContext->IASetInputLayout(m_inputLayout.Get());
 
-	for(Particle* particle : m_particles)
+	for(Particle* particle : m_particleWorld->GetActiveParticles())
 	{
 		assert(particle != nullptr && "particle is nullptr!");
 		Matrix scale = Matrix::CreateScale(particle->GetWorldSpaceRadius()*2);
