@@ -70,103 +70,148 @@ void Game::Initialize(HWND window, int width, int height)
 	m_particleRenderer = new ParticleRenderer(Colors::White);
 	m_particleRenderer->Initialize(m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext(), m_particleWorld);
 
-	m_particleAnchor[0] = Vector3(-50, 50, 0);
-	m_particleAnchor[1] = Vector3(0, 50, 0);
-	m_particleAnchor[2] = Vector3(50, 50, 0);
+
+	// ---------------------------- CLOTH ----------------------------
+	{
+		m_particleAnchor[0] = Vector3(-130, 200, 0);
+		m_particleAnchor[1] = Vector3(-100, 200, 0);
+		m_particleAnchor[2] = Vector3(-70, 200, 0);
 	
-	float springConstant = 10.f;
-	float restLength = 2;
-	float damping = 0.8f;
-	ParticleAnchoredBungeeForceGenerator* anchoredBungeeForceGenerator = new ParticleAnchoredBungeeForceGenerator(&m_particleAnchor[0], springConstant, restLength);
-	ParticleAnchoredFakeStiffSpringForceGenerator* anchoredFakeStiffSpringForceGenerator = new ParticleAnchoredFakeStiffSpringForceGenerator(&m_particleAnchor[1], springConstant, damping);
-	ParticleAnchoredSpringForceGenerator* anchoredSpringForceGenerator = new ParticleAnchoredSpringForceGenerator(&m_particleAnchor[2], springConstant, restLength);
-	m_particleForceGenerators.push_back(anchoredBungeeForceGenerator);
-	m_particleForceGenerators.push_back(anchoredFakeStiffSpringForceGenerator);
-	m_particleForceGenerators.push_back(anchoredSpringForceGenerator);
+		float springConstant = 200.f;
+		float restLength = 10;
+		float damping = 0.8f;
 
-	Particle* anchoredBungeeParticle = m_particleWorld->GetNewParticle();
-	anchoredBungeeParticle->SetPosition(m_particleAnchor[0]);
-	anchoredBungeeParticle->SetMass(10);
-	anchoredBungeeParticle->SetAcceleration(m_gravity);
-	anchoredBungeeParticle->SetWorldSpaceRadius(10);
-	anchoredBungeeParticle->SetType(ParticleTypes::Cloth);
-	m_particleForceRegistry.Add(anchoredBungeeParticle, anchoredBungeeForceGenerator);
+		Particle* particle[3][3];
 
-	Particle* anchoredFakeStiffSpringParticle = m_particleWorld->GetNewParticle();
-	anchoredFakeStiffSpringParticle->SetPosition(m_particleAnchor[1]+Vector3::Down*50);
-	anchoredFakeStiffSpringParticle->SetMass(10);
-	anchoredFakeStiffSpringParticle->SetAcceleration(m_gravity);
-	anchoredFakeStiffSpringParticle->SetWorldSpaceRadius(10);
-	anchoredFakeStiffSpringParticle->SetType(ParticleTypes::Cloth);
-	m_particleForceRegistry.Add(anchoredFakeStiffSpringParticle, anchoredFakeStiffSpringForceGenerator);
+		for(int x = 0; x < 3; ++x)
+		{
+			ParticleAnchoredSpringForceGenerator* anchoredSpringForceGenerator = new ParticleAnchoredSpringForceGenerator(&m_particleAnchor[x], springConstant, restLength);
+			m_particleForceGenerators.push_back(anchoredSpringForceGenerator);
 
-	Particle* anchoredSpringParticle = m_particleWorld->GetNewParticle();
-	anchoredSpringParticle->SetPosition(m_particleAnchor[2]);
-	anchoredSpringParticle->SetMass(10);
-	anchoredSpringParticle->SetAcceleration(m_gravity);
-	anchoredSpringParticle->SetWorldSpaceRadius(10);
-	anchoredSpringParticle->SetType(ParticleTypes::Cloth);
-	m_particleForceRegistry.Add(anchoredSpringParticle, anchoredSpringForceGenerator);
+			Particle* anchoredSpringParticle = m_particleWorld->GetNewParticle();
+			anchoredSpringParticle->SetPosition(m_particleAnchor[x]);
+			anchoredSpringParticle->SetMass(10);
+			anchoredSpringParticle->SetAcceleration(m_gravity);
+			anchoredSpringParticle->SetWorldSpaceRadius(10);
+			anchoredSpringParticle->SetType(ParticleTypes::Cloth);
+			m_particleForceRegistry.Add(anchoredSpringParticle, anchoredSpringForceGenerator);
 
 
-	ParticleBungeeForceGenerator* bungeeForceGenerator = new ParticleBungeeForceGenerator(anchoredBungeeParticle, springConstant/2.f, restLength/2.f);
-	ParticleSpringForceGenerator* springForceGenerator = new ParticleSpringForceGenerator(anchoredSpringParticle, springConstant/2.f, restLength/2.f);
-	m_particleForceGenerators.push_back(bungeeForceGenerator);
-	m_particleForceGenerators.push_back(springForceGenerator);
+			particle[x][0] = anchoredSpringParticle;
+			for(int y = 1; y < 3; ++y)
+			{
+				ParticleSpringForceGenerator* gen1 = new ParticleSpringForceGenerator(particle[x][y-1], springConstant/2, restLength/2);
+				m_particleForceGenerators.push_back(gen1);
 
-	Particle* bungeeParticle = m_particleWorld->GetNewParticle();
-	bungeeParticle->SetPosition(m_particleAnchor[0] + Vector3::UnitX * 25);
-	bungeeParticle->SetMass(10);
-	bungeeParticle->SetAcceleration(m_gravity);
-	bungeeParticle->SetWorldSpaceRadius(10);
-	bungeeParticle->SetType(ParticleTypes::Cloth);
-	m_particleForceRegistry.Add(bungeeParticle, bungeeForceGenerator);
+				Particle* springParticle = m_particleWorld->GetNewParticle();
+				springParticle->SetPosition(m_particleAnchor[x] + Vector3::Down * 30 * y);
+				springParticle->SetMass(10);
+				springParticle->SetAcceleration(m_gravity);
+				springParticle->SetWorldSpaceRadius(10);
+				springParticle->SetType(ParticleTypes::Cloth);
+				m_particleForceRegistry.Add(springParticle, gen1);
+				particle[x][y] = springParticle;
 
-	Particle* springParticle = m_particleWorld->GetNewParticle();
-	springParticle->SetPosition(m_particleAnchor[2] + Vector3::UnitX * 25);
-	springParticle->SetMass(10);
-	springParticle->SetAcceleration(m_gravity);
-	springParticle->SetWorldSpaceRadius(10);
-	springParticle->SetType(ParticleTypes::Cloth);
-	m_particleForceRegistry.Add(springParticle, springForceGenerator);
+
+				ParticleSpringForceGenerator* gen2 = new ParticleSpringForceGenerator(springParticle, springConstant/2, restLength/2);
+				m_particleForceRegistry.Add(particle[x][y - 1], gen2);
+				m_particleForceGenerators.push_back(gen2);
+
+			}
+		}
+
+		for(int y = 0; y < 3; ++y)
+		{
+			for(int x = 0; x < 2; ++x)
+			{
+				ParticleSpringForceGenerator* gen1 = new ParticleSpringForceGenerator(particle[x][y], springConstant/2, restLength*2);
+				m_particleForceRegistry.Add(particle[x + 1][y], gen1);
+				m_particleForceGenerators.push_back(gen1);
+
+				ParticleSpringForceGenerator* gen2 = new ParticleSpringForceGenerator(particle[x+1][y], springConstant/2, restLength*2);
+				m_particleForceRegistry.Add(particle[x][y], gen2);
+				m_particleForceGenerators.push_back(gen2);
+			}
+		}
+	}
 
 
 	// ---------------------------- LEVEL BOUND PLATFORMS CONTACTS ----------------------------
-	Vector3 levelBoundPlatformStartEnd[4][2] = {
-		{ Vector3(-levelBounds.x, -levelBounds.y, 0), Vector3(levelBounds.x, -levelBounds.y, 0) },	// ground
-		{ Vector3(levelBounds.x, levelBounds.y, 0), Vector3(-levelBounds.x, levelBounds.y, 0) },	// ceiling
-		{ Vector3(-levelBounds.x, levelBounds.y, 0), Vector3(-levelBounds.x, -levelBounds.y, 0) },	// left wall
-		{ Vector3(levelBounds.x, -levelBounds.y, 0), Vector3(levelBounds.x, levelBounds.y, 0) }	// right wall
-	};
-	for(int i = 0; i < 4; ++i)
 	{
+		Vector3 levelBoundPlatformStartEnd[4][2] = {
+			{ Vector3(-levelBounds.x, -levelBounds.y, 0), Vector3(levelBounds.x, -levelBounds.y, 0) },	// ground
+			{ Vector3(levelBounds.x, levelBounds.y, 0), Vector3(-levelBounds.x, levelBounds.y, 0) },	// ceiling
+			{ Vector3(-levelBounds.x, levelBounds.y, 0), Vector3(-levelBounds.x, -levelBounds.y, 0) },	// left wall
+			{ Vector3(levelBounds.x, -levelBounds.y, 0), Vector3(levelBounds.x, levelBounds.y, 0) }	// right wall
+		};
+		for(int i = 0; i < 4; ++i)
+		{
+			Platform* platform = new Platform();
+			platform->SetColorAndThickness(Colors::Blue, 1);
+			platform->Initialize(levelBoundPlatformStartEnd[i][0], levelBoundPlatformStartEnd[i][1], m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext());
+			m_platforms.push_back(platform);
+
+			ParticlePlatformContactsGenerator* platformContactsGenerator = new ParticlePlatformContactsGenerator(levelBoundPlatformStartEnd[i][0], levelBoundPlatformStartEnd[i][1]);
+			platformContactsGenerator->AddParticle(m_particleWorld->GetActiveParticles());
+			m_particleContactGenerators.push_back(platformContactsGenerator);
+			m_particleWorld->GetContactGenerators().push_back(platformContactsGenerator);
+		}
+	}
+
+	// ---------------------------- FLYING PLATFORMS CONTACTS ----------------------------
+	{
+		Vector3 flyingPlatformStartEnd[2][2] = {
+			{ Vector3(-100, -100, 0), Vector3(100, 0, 0) },	// left
+			{ Vector3(100, 0, 0), Vector3(250, -50, 0) }		// right
+		};
+		for (int i = 0; i < 2; ++i)
+		{
+			Platform* platform = new Platform();
+			platform->SetColorAndThickness(Colors::Blue, 10);
+			platform->Initialize(flyingPlatformStartEnd[i][0], flyingPlatformStartEnd[i][1], m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext());
+			m_platforms.push_back(platform);
+
+			ParticlePlatformContactsGenerator* platformContactsGenerator = new ParticlePlatformContactsGenerator(flyingPlatformStartEnd[i][0], flyingPlatformStartEnd[i][1]);
+			platformContactsGenerator->AddParticle(m_particleWorld->GetActiveParticles());
+			m_particleContactGenerators.push_back(platformContactsGenerator);
+			m_particleWorld->GetContactGenerators().push_back(platformContactsGenerator);
+		}
+	}
+
+	// ---------------------------- SLOPE PLATFORM CONTACTS ----------------------------
+	{
+		Vector3 slopePlatformStartEnd[2] = { Vector3(-levelBounds.x, -levelBounds.y+300, 0.f), Vector3(-levelBounds.x + 200, -levelBounds.y, 0) };
 		Platform* platform = new Platform();
-		platform->SetColorAndThickness(Colors::Blue, 1);
-		platform->Initialize(levelBoundPlatformStartEnd[i][0], levelBoundPlatformStartEnd[i][1], m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext());
+		platform->SetColorAndThickness(Colors::Blue, 10);
+		platform->Initialize(slopePlatformStartEnd[0], slopePlatformStartEnd[1], m_deviceResources->GetD3DDevice(), m_deviceResources->GetD3DDeviceContext());
 		m_platforms.push_back(platform);
 
-		ParticlePlatformContactsGenerator* platformContactsGenerator = new ParticlePlatformContactsGenerator(levelBoundPlatformStartEnd[i][0], levelBoundPlatformStartEnd[i][1]);
+		ParticlePlatformContactsGenerator* platformContactsGenerator = new ParticlePlatformContactsGenerator(slopePlatformStartEnd[0], slopePlatformStartEnd[1]);
 		platformContactsGenerator->AddParticle(m_particleWorld->GetActiveParticles());
 		m_particleContactGenerators.push_back(platformContactsGenerator);
 		m_particleWorld->GetContactGenerators().push_back(platformContactsGenerator);
 	}
 
 	// ---------------------------- PARTICLE VS PARTICLE CONTACTS ----------------------------
-	ParticleParticleContactGenerator* particleContactGenerator = new ParticleParticleContactGenerator();
-	particleContactGenerator->AddParticle(m_particleWorld->GetActiveParticles());
-	m_particleContactGenerators.push_back(particleContactGenerator);
-	m_particleWorld->GetContactGenerators().push_back(particleContactGenerator);
-
-
-	// ---------------------------- PARTICLE VS PARTICLE CONTACTS ----------------------------
-	std::vector<ParticleManagement*> manageParticleIn;
-	for(ParticleContactGenerator* contactGenerator : m_particleContactGenerators)
 	{
-		manageParticleIn.push_back(contactGenerator);
+		ParticleParticleContactGenerator* particleContactGenerator = new ParticleParticleContactGenerator();
+		particleContactGenerator->AddParticle(m_particleWorld->GetActiveParticles());
+		m_particleContactGenerators.push_back(particleContactGenerator);
+		m_particleWorld->GetContactGenerators().push_back(particleContactGenerator);
 	}
-	//manageParticleIn.pop_back();
-	m_blizzardParticleEmitter.push_back(new BlizzardParticleEmitter(m_particleWorld, manageParticleIn, m_gravity, Vector3(-width / 4, height / 4, 0), 1500));
-	m_blizzardParticleEmitter.push_back(new BlizzardParticleEmitter(m_particleWorld, manageParticleIn, m_gravity, Vector3(width / 4, height / 4, 0), -1500));
+
+
+	// ---------------------------- BLIZZARD PARTICLE EMITTER ----------------------------
+	{
+		std::vector<ParticleManagement*> manageParticleIn;
+		for(ParticleContactGenerator* contactGenerator : m_particleContactGenerators)
+		{
+			manageParticleIn.push_back(contactGenerator);
+		}
+		//manageParticleIn.pop_back();
+		m_blizzardParticleEmitter.push_back(new BlizzardParticleEmitter(m_particleWorld, manageParticleIn, m_gravity, Vector3(-width / 3, height / 3, 0), 1500));
+		m_blizzardParticleEmitter.push_back(new BlizzardParticleEmitter(m_particleWorld, manageParticleIn, m_gravity, Vector3(width / 3, height / 3, 0), -1500));
+	}
 	
 }
 
@@ -221,24 +266,29 @@ void Game::checkAndProcessKeyboardInput(const float& deltaTime)
 		m_particleWorld->DestroyAllBalls();
 	}
 
-	if(kb.IsKeyDown(Keyboard::Keys::Q))
+	static bool qDown = false;
+	if (kb.IsKeyDown(Keyboard::Keys::Q) && !qDown)
 	{
-		for (int i = 1; i <= 25; ++i)
+		qDown = true;
+		for (int i = 1; i <= 20; ++i)
 		{
 			Particle* particle = m_particleWorld->GetNewParticle();
-			particle->SetPosition(Vector3(-200,0,0) + Vector3::UnitX * static_cast<float>(i)*10.f);
+			particle->SetPosition(Vector3(-330, 300, 0) + Vector3::UnitX * static_cast<float>(i)*30.f);
 			particle->SetMass(10);
-			particle->SetVelocity(Vector3::Up * i *(rand() % 20) + Vector3::Left * i *(rand() % 10));
+			particle->SetVelocity(Vector3::Down *(rand() % 300) + Vector3::Left *(rand() % 100) + Vector3::Right *(rand() % 100));
 			particle->SetAcceleration(m_gravity);
 			particle->SetWorldSpaceRadius(particle->GetMass());
-			particle->SetBouncinessFactor(0.2f);
+			//particle->SetBouncinessFactor(fmodf(static_cast<float>(rand()) * 0.01f, 0.9f));
+			particle->SetBouncinessFactor(0.5f);
 			particle->SetType(ParticleTypes::Ball);
-			for(ParticleContactGenerator* particleGenerator : m_particleContactGenerators)
+			for (ParticleContactGenerator* particleGenerator : m_particleContactGenerators)
 			{
 				particleGenerator->AddParticle(particle);
 			}
 		}
 	}
+	else if (kb.IsKeyUp(Keyboard::Keys::Q))
+		qDown = false;
 }
 
 void Game::checkAndProcessMouseInput(const float& deltaTime)

@@ -108,6 +108,7 @@ Particle* ParticleWorld::GetNewParticle()
 	Particle* particle = m_particlePool.back();
 	m_particlePool.pop_back();
 	particle->SetActive(true);
+	particle->SetType(ParticleTypes::None);
 	m_activeParticles.push_back(particle);
 	return particle;
 }

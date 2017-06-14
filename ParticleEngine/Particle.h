@@ -57,7 +57,7 @@ protected:
 	float m_mass = 0;
 	float m_inverseMass = 0;
 	float m_worldSpaceRadius = 1;
-	float m_bouncinessFactor = 0.1f;
+	float m_bouncinessFactor = 0.0f;
 	bool m_isActive = false;
 	ParticleTypes m_type;
 };

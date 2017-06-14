@@ -70,9 +70,9 @@ private:
 	std::vector<ParticleContactGenerator*> m_particleContactGenerators;
 	ParticleRenderer* m_particleRenderer = nullptr;
 	ParticleWorld* m_particleWorld;
-	DirectX::SimpleMath::Vector3 m_particleAnchor[3];
 	std::vector<Platform*> m_platforms;
 	std::vector<BlizzardParticleEmitter*> m_blizzardParticleEmitter;
-	DirectX::SimpleMath::Vector3 m_gravity = DirectX::SimpleMath::Vector3::Down * 20;
+	DirectX::SimpleMath::Vector3 m_gravity = DirectX::SimpleMath::Vector3::Down * 100;
+	DirectX::SimpleMath::Vector3 m_particleAnchor[3];
 
 };
