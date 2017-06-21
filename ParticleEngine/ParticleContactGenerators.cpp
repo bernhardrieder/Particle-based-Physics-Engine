@@ -2,14 +2,15 @@
 #include "ParticleContactGenerators.h"
 
 using namespace DirectX::SimpleMath;
+using namespace DirectX;
 
-int ParticleGroundContactsGenerator::AddContact(ParticleContact* contact, const int& limit) const
+int ParticleGroundContactsGenerator::AddContact(ParticleContact* contact, const int& limit)
 {
 	int count = 0;
 	for (Particle* particle : m_particles)
 	{
 		float y = particle->GetPosition().y;
-		if (y < 0.0f)
+		if (y < m_ground)
 		{
 			contact->ContactNormal = Vector3::Up;
 			contact->ContactParticles[0] = particle;
@@ -39,7 +40,7 @@ void ParticlePlatformContactsGenerator::Initialize(const DirectX::SimpleMath::Ve
 	m_end = end;
 }
 
-int ParticlePlatformContactsGenerator::AddContact(ParticleContact* contact, const int& limit) const
+int ParticlePlatformContactsGenerator::AddContact(ParticleContact* contact, const int& limit) 
 {
 	int used = 0;
 	for (Particle* particle : m_particles)
@@ -114,17 +115,20 @@ int ParticlePlatformContactsGenerator::AddContact(ParticleContact* contact, cons
 	return used;
 }
 
-int ParticleParticleContactGenerator::AddContact(ParticleContact* contact, const int& limit) const
+ParticleParticleContactGenerator::ParticleParticleContactGenerator(): ParticleContactGenerator()
 {
-	std::vector<std::tuple<Particle*, Particle*>> usedParticles;
-	usedParticles.reserve(limit);
+	usedParticles.resize(std::numeric_limits<short>::max());
+}
 
+int ParticleParticleContactGenerator::AddContact(ParticleContact* contact, const int& limit) 
+{
+	m_usedParticleIndex = 0;
 	int count = 0;
 	for (Particle* particle : m_particles)
 	{
 		for (Particle* other : m_particles)
 		{
-			if (particle == other)
+			if (particle == other ||(particle->GetType() == ParticleTypes::Snow && other->GetType() == ParticleTypes::Snow))
 				continue;
 
 			Vector3 posParticle = particle->GetPosition();
@@ -136,7 +140,7 @@ int ParticleParticleContactGenerator::AddContact(ParticleContact* contact, const
 			if (size <= 0.0f || size >= particle->GetWorldSpaceRadius() + other->GetWorldSpaceRadius())
 				continue;
 
-			if (particlePairUsed(usedParticles, particle, other))
+			if (particlePairUsed(particle, other))
 				continue;
 
 			bool destroyParticle, destroyOther;
@@ -159,7 +163,10 @@ int ParticleParticleContactGenerator::AddContact(ParticleContact* contact, const
 			contact++;
 			count++;
 
-			usedParticles.push_back(std::make_tuple(particle, other));
+			//usedParticles.push_back(std::make_pair(particle, other));
+			usedParticles[m_usedParticleIndex].first = particle;
+			usedParticles[m_usedParticleIndex].second = other;
+			++m_usedParticleIndex;
 
 			if (count >= limit)
 				return count;
@@ -168,12 +175,12 @@ int ParticleParticleContactGenerator::AddContact(ParticleContact* contact, const
 	return count;
 }
 
-bool ParticleParticleContactGenerator::particlePairUsed(const std::vector<std::tuple<Particle*, Particle*>>& particlePairs, Particle* one, Particle* two)
+bool ParticleParticleContactGenerator::particlePairUsed(Particle* one, Particle* two) const
 {
-	for (const std::tuple<Particle*, Particle*>& particlePair : particlePairs)
+	for (int i = 0; i < m_usedParticleIndex; ++i)
 	{
-		if (std::get<0>(particlePair) == one && std::get<1>(particlePair) == two ||
-			std::get<0>(particlePair) == two && std::get<1>(particlePair) == one)
+		if (usedParticles[i].first == one && usedParticles[i].second == two ||
+			usedParticles[i].first == two && usedParticles[i].second == one)
 			return true;
 	}
 	return false;

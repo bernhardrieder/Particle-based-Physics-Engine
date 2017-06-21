@@ -70,6 +70,44 @@ const DirectX::SimpleMath::Vector3* ParticleAnchoredSpringForceGenerator::GetAnc
 	return m_anchor;
 }
 
+ParticleFakeStiffSpringForceGenerator::ParticleFakeStiffSpringForceGenerator()
+{
+}
+
+ParticleFakeStiffSpringForceGenerator::ParticleFakeStiffSpringForceGenerator(Particle* other, const float& springConstant, const float& damping) : m_other(other), m_springConstant(springConstant), m_damping(damping)
+{
+}
+
+void ParticleFakeStiffSpringForceGenerator::Initialize(Particle* other, const float& springConstant, const float& damping)
+{
+	m_other = other;
+	m_springConstant = springConstant;
+	m_damping = damping;
+}
+
+void ParticleFakeStiffSpringForceGenerator::UpdateForce(Particle* particle, const float& deltaTime)
+{
+	// Check that we do not have infinite mass
+	if (!particle->HasFiniteMass()) return;
+
+	// Calculate the relative position of the particle to the anchor
+	Vector3 position = particle->GetPosition() - m_other->GetPosition();
+
+	// Calculate the constants and check they are in bounds.
+	float gamma = 0.5f * sqrtf(4 * m_springConstant - m_damping*m_damping);
+	if (gamma == 0.0f) return;
+
+	Vector3 c = (position * (m_damping / (2.0f * gamma))) + (particle->GetVelocity() * (1.0f / gamma));
+
+	// Calculate the target position
+	Vector3 target = (position * cosf(gamma * deltaTime)) + (c * sinf(gamma * deltaTime));
+	target *= expf(-0.5f * deltaTime * m_damping);
+
+	// Calculate the resulting acceleration and therefore the force
+	Vector3 accel = (target - position) * (1.0f / (deltaTime*deltaTime)) - particle->GetVelocity() * (1.0f / deltaTime);
+	particle->AddForce(accel * particle->GetMass());
+}
+
 ParticleAnchoredFakeStiffSpringForceGenerator::ParticleAnchoredFakeStiffSpringForceGenerator()
 {
 }

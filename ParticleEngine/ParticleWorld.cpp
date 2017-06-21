@@ -141,6 +141,7 @@ void ParticleWorld::removeInactiveParticles(std::vector<Particle*>& particles)
 
 void ParticleWorld::releaseInactiveParticles()
 {
+
 	for (Particle* particle : m_activeParticles)
 	{
 		if (!particle->IsActive())	
@@ -154,8 +155,8 @@ void ParticleWorld::disableActiveParticleOutOfLevelBounds()
 	for (Particle* particle : m_activeParticles)
 	{
 		Vector3 pos = particle->GetPosition();
-		if(pos.x < -m_levelBounds.x || pos.x > m_levelBounds.x || 
-			pos.y < -m_levelBounds.y || pos.y > m_levelBounds.y)
+		if(/*pos.x < -m_levelBounds.x || pos.x > m_levelBounds.x ||*/ 
+			pos.y < -m_levelBounds.y /*|| pos.y > m_levelBounds.y*/)
 		{
 			particle->SetActive(false);
 		}
@@ -169,7 +170,7 @@ void ParticleWorld::destroy(ParticleTypes type)
 		if (particle->GetType() == type)
 			particle->SetActive(false);
 	}
-	removeInactiveParticles(m_activeParticles);
+	releaseInactiveParticles();
 }
 
 void ParticleWorld::DestroyAllSnow()

@@ -16,7 +16,7 @@ public:
 	* to. The method returns the number of contacts that have
 	* been written.
 	*/
-	virtual int AddContact(ParticleContact* contact, const int& limit) const = 0;
+	virtual int AddContact(ParticleContact* contact, const int& limit) = 0;
 };
 
 /**
@@ -26,7 +26,11 @@ public:
 class ParticleGroundContactsGenerator : public ParticleContactGenerator
 {
 public:
-	int AddContact(ParticleContact* contact, const int& limit) const override;
+	int AddContact(ParticleContact* contact, const int& limit) override;
+	void SetGroundY(const float& ground) { m_ground = ground; };
+
+private:
+	float m_ground = 0.f;
 };
 
 /**
@@ -35,24 +39,37 @@ public:
 */
 class ParticlePlatformContactsGenerator : public ParticleContactGenerator
 {
+	struct Plane
+	{
+		DirectX::SimpleMath::Vector3 N;
+		float D;
+	};
 public:
 	ParticlePlatformContactsGenerator();
 	ParticlePlatformContactsGenerator(const DirectX::SimpleMath::Vector3& start, const DirectX::SimpleMath::Vector3& end);
 
 	void Initialize(const DirectX::SimpleMath::Vector3& start, const DirectX::SimpleMath::Vector3& end);
-	int AddContact(ParticleContact* contact, const int& limit) const override;
+	int AddContact(ParticleContact* contact, const int& limit) override;
 
 private:
 	DirectX::SimpleMath::Vector3 m_start = DirectX::SimpleMath::Vector3::Zero;
 	DirectX::SimpleMath::Vector3 m_end = DirectX::SimpleMath::Vector3::Zero;
+
+	DirectX::SimpleMath::Vector3 n;
+	float d;
 };
 
 class ParticleParticleContactGenerator : public ParticleContactGenerator
 {
 public:
-	int AddContact(ParticleContact* contact, const int& limit) const override;
+	ParticleParticleContactGenerator();
+
+	int AddContact(ParticleContact* contact, const int& limit) override;
 
 private:
-	static bool particlePairUsed(const std::vector<std::tuple<Particle*, Particle*>>& particlePairs, Particle* one, Particle* two);
+	bool particlePairUsed(Particle* one, Particle* two) const;
 	static void shouldBeDestroyed(Particle* lhs, Particle* rhs, bool& outDestroyLhs, bool& outDestroyRhs);
+
+	std::vector<std::pair<Particle*, Particle*>> usedParticles;
+	int m_usedParticleIndex = 0;
 };

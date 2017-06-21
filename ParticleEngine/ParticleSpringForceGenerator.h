@@ -31,6 +31,21 @@ protected:
 	float m_restLength = 1;
 };
 
+class ParticleFakeStiffSpringForceGenerator : public ParticleForceGenerator
+{
+public:
+	ParticleFakeStiffSpringForceGenerator();
+	ParticleFakeStiffSpringForceGenerator(Particle* other, const float& springConstant, const float& damping);
+
+	void Initialize(Particle* other, const float& springConstant, const float& damping);
+	void UpdateForce(Particle* particle, const float& deltaTime) override;
+
+protected:
+	Particle* m_other = nullptr;
+	float m_springConstant = 1;
+	float m_damping = 1;
+};
+
 class ParticleAnchoredFakeStiffSpringForceGenerator : public ParticleForceGenerator
 {
 public:

@@ -73,6 +73,9 @@ private:
 	std::vector<Platform*> m_platforms;
 	std::vector<BlizzardParticleEmitter*> m_blizzardParticleEmitter;
 	DirectX::SimpleMath::Vector3 m_gravity = DirectX::SimpleMath::Vector3::Down * 100;
+	DirectX::SimpleMath::Vector3 m_snowGravity = DirectX::SimpleMath::Vector3::Down * 10;
+	DirectX::SimpleMath::Vector3 m_fanAcceleration = DirectX::SimpleMath::Vector3::Left * 100;
+	int m_fanAccelerationMultiplier = 1;
 	DirectX::SimpleMath::Vector3 m_particleAnchor[3];
 
 };

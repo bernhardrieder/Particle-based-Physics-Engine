@@ -40,11 +40,11 @@ void BlizzardParticleEmitter::emitParticle()
 	if (!particle)
 		return;
 	particle->SetPosition(m_position);
-	particle->SetMass(1);
+	particle->SetMass(0.0001);
+	particle->SetWorldSpaceRadius(2);
 	particle->SetVelocity(m_currentEmitDirection*75);
 	particle->SetAcceleration(m_gravity);
-	particle->SetWorldSpaceRadius(particle->GetMass());
-	particle->SetBouncinessFactor(0.0f);
+	particle->SetBouncinessFactor(0.0001f);
 	particle->SetType(ParticleTypes::Snow);
 
 	for(auto& particleManager : m_manageParticlesInThis)
