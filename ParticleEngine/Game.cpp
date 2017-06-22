@@ -64,7 +64,7 @@ void Game::Initialize(HWND window, int width, int height)
 	
 	srand(time(nullptr));
 	Vector2 cameraLevelBounds = Vector2(width / 2.f, height / 2.f);
-	LevelBounds bounds{ -(width*10), (width*10), -cameraLevelBounds.y, (height*2) };
+	LevelBounds bounds{ -(width*10), (width*10), -height, (height*2) };
 
 	m_particleWorld = new ParticleWorld(50000, 5000, bounds);
 	m_particleRenderer = new ParticleRenderer(Colors::White);
