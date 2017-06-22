@@ -29,7 +29,7 @@ void BlizzardParticleEmitter::SetGravity(const DirectX::SimpleMath::Vector3& gra
 	m_gravity = gravity;
 }
 
-void BlizzardParticleEmitter::SetRotationSpeed(const float rotationSpeed)
+void BlizzardParticleEmitter::SetRotationSpeed(const float& rotationSpeed)
 {
 	m_rotationSpeed = rotationSpeed;
 }
@@ -42,7 +42,7 @@ void BlizzardParticleEmitter::emitParticle()
 	particle->SetPosition(m_position);
 	particle->SetMass(0.0001);
 	particle->SetWorldSpaceRadius(2);
-	particle->SetVelocity(m_currentEmitDirection*75);
+	particle->SetVelocity(m_currentEmitDirection*35);
 	particle->SetAcceleration(m_gravity);
 	particle->SetBouncinessFactor(0.0001f);
 	particle->SetType(ParticleTypes::Snow);

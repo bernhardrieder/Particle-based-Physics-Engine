@@ -3,12 +3,12 @@
 
 using namespace DirectX::SimpleMath;
 
-ParticleWorld::ParticleWorld(const int& maxContactsPerFrame, const int& poolSize, const DirectX::SimpleMath::Vector2& levelBounds, const int& contactResolutionIterations) 
+ParticleWorld::ParticleWorld(const int& maxContactsPerFrame, const int& poolSize, const LevelBounds& levelBounds, const int& contactResolutionIterations)
 : m_contactResolver(contactResolutionIterations), m_maxContacts(maxContactsPerFrame), m_levelBounds(levelBounds)
 {
 	m_contacts = new ParticleContact[maxContactsPerFrame];
 	m_shouldCalculateIterations = (contactResolutionIterations == 0);
-	createPool(poolSize);
+	createParticlePool(poolSize);
 }
 
 ParticleWorld::~ParticleWorld()
@@ -40,10 +40,10 @@ void ParticleWorld::RunPhysics(const float& deltaTime)
 	m_registry.UpdateForces(deltaTime);
 
 	// Then integrate the objects
-	IntegrateAllParticles(deltaTime);
+	integrateAllParticles(deltaTime);
 
 	// Generate contacts
-	int usedContacts = GenerateContactsWithRegisteredContactGeneratorsAndReturnNumOfContacts();
+	int usedContacts = generateContactsWithRegisteredContactGeneratorsAndReturnNumOfContacts();
 
 	// And process them
 	if (usedContacts)
@@ -56,7 +56,7 @@ void ParticleWorld::RunPhysics(const float& deltaTime)
 	}
 }
 
-void ParticleWorld::IntegrateAllParticles(const float& deltaTime)
+void ParticleWorld::integrateAllParticles(const float& deltaTime)
 {
 	for (Particle* particle : m_activeParticles)
 	{
@@ -64,7 +64,7 @@ void ParticleWorld::IntegrateAllParticles(const float& deltaTime)
 	}
 }
 
-int ParticleWorld::GenerateContactsWithRegisteredContactGeneratorsAndReturnNumOfContacts()
+int ParticleWorld::generateContactsWithRegisteredContactGeneratorsAndReturnNumOfContacts()
 {
 	int limitOfContacts = m_maxContacts;
 	ParticleContact* nextContact = m_contacts;
@@ -120,7 +120,7 @@ void ParticleWorld::ReleaseParticle(Particle* particle)
 	m_particlePool.push_back(particle);
 }
 
-void ParticleWorld::createPool(const int& poolSize)
+void ParticleWorld::createParticlePool(const int& poolSize)
 {
 	for(int i = 0; i < poolSize; ++i)
 	{
@@ -155,15 +155,15 @@ void ParticleWorld::disableActiveParticleOutOfLevelBounds()
 	for (Particle* particle : m_activeParticles)
 	{
 		Vector3 pos = particle->GetPosition();
-		if(/*pos.x < -m_levelBounds.x || pos.x > m_levelBounds.x ||*/ 
-			pos.y < -m_levelBounds.y /*|| pos.y > m_levelBounds.y*/)
+		if(pos.x < m_levelBounds.MinX || pos.x > m_levelBounds.MaxX || 
+			pos.y < m_levelBounds.MinY || pos.y > m_levelBounds.MaxY)
 		{
 			particle->SetActive(false);
 		}
 	}
 }
 
-void ParticleWorld::destroy(ParticleTypes type)
+void ParticleWorld::destroyAllOfType(ParticleTypes type)
 {
 	for (Particle* particle : m_activeParticles)
 	{
@@ -175,10 +175,10 @@ void ParticleWorld::destroy(ParticleTypes type)
 
 void ParticleWorld::DestroyAllSnow()
 {
-	destroy(ParticleTypes::Snow);
+	destroyAllOfType(ParticleTypes::Snow);
 }
 
 void ParticleWorld::DestroyAllBalls()
 {
-	destroy(ParticleTypes::Ball);
+	destroyAllOfType(ParticleTypes::Ball);
 }

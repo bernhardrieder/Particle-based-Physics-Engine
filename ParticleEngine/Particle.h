@@ -59,7 +59,7 @@ protected:
 	float m_worldSpaceRadius = 1;
 	float m_bouncinessFactor = 0.0f;
 	bool m_isActive = false;
-	ParticleTypes m_type;
+	ParticleTypes m_type = ParticleTypes::None;
 };
 
 class ParticleManagement

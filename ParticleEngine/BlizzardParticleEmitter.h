@@ -10,7 +10,7 @@ public:
 
 	void SetPosition(const DirectX::SimpleMath::Vector3& position);
 	void SetGravity(const DirectX::SimpleMath::Vector3& gravity);
-	void SetRotationSpeed(const float rotationSpeed);
+	void SetRotationSpeed(const float& rotationSpeed);
 
 private:
 	void emitParticle();

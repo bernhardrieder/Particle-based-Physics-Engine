@@ -17,7 +17,7 @@ public:
     Game();
 	~Game();
 
-    // Initialization and management
+	// Initialization and management
     void Initialize(HWND window, int width, int height);
 
     // Basic game loop
@@ -50,6 +50,14 @@ private:
 	void checkAndProcessKeyboardInput(const float& deltaTime);
 	void checkAndProcessMouseInput(const float& deltaTime);
 
+	void createClothParticle();
+	void createLevelBoundPlatformsAndContactGenerator(DirectX::SimpleMath::Vector2 cameraLevelBounds);
+	void createSlopePlatformAndContactGenerator(DirectX::SimpleMath::Vector2 cameraLevelBounds);
+	void createFlyingPlatformsAndContactGenerator();
+	void createParticleVsParticleContactGenerator();
+	void createBlizzardParticleEmitter(DirectX::SimpleMath::Vector2 cameraLevelBounds);
+
+
     // Device resources.
     std::unique_ptr<DX::DeviceResources>    m_deviceResources;
 
@@ -73,7 +81,7 @@ private:
 	std::vector<Platform*> m_platforms;
 	std::vector<BlizzardParticleEmitter*> m_blizzardParticleEmitter;
 	DirectX::SimpleMath::Vector3 m_gravity = DirectX::SimpleMath::Vector3::Down * 100;
-	DirectX::SimpleMath::Vector3 m_snowGravity = DirectX::SimpleMath::Vector3::Down * 10;
+	DirectX::SimpleMath::Vector3 m_snowGravity = DirectX::SimpleMath::Vector3::Down * 5;
 	DirectX::SimpleMath::Vector3 m_fanAcceleration = DirectX::SimpleMath::Vector3::Left * 100;
 	int m_fanAccelerationMultiplier = 1;
 	DirectX::SimpleMath::Vector3 m_particleAnchor[3];

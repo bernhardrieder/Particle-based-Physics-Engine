@@ -117,7 +117,7 @@ int ParticlePlatformContactsGenerator::AddContact(ParticleContact* contact, cons
 
 ParticleParticleContactGenerator::ParticleParticleContactGenerator(): ParticleContactGenerator()
 {
-	usedParticles.resize(std::numeric_limits<short>::max());
+	m_usedParticles.resize(std::numeric_limits<short>::max());
 }
 
 int ParticleParticleContactGenerator::AddContact(ParticleContact* contact, const int& limit) 
@@ -163,9 +163,9 @@ int ParticleParticleContactGenerator::AddContact(ParticleContact* contact, const
 			contact++;
 			count++;
 
-			//usedParticles.push_back(std::make_pair(particle, other));
-			usedParticles[m_usedParticleIndex].first = particle;
-			usedParticles[m_usedParticleIndex].second = other;
+			//todo: should create a branch for out of range
+			m_usedParticles[m_usedParticleIndex].first = particle;
+			m_usedParticles[m_usedParticleIndex].second = other;
 			++m_usedParticleIndex;
 
 			if (count >= limit)
@@ -179,8 +179,8 @@ bool ParticleParticleContactGenerator::particlePairUsed(Particle* one, Particle*
 {
 	for (int i = 0; i < m_usedParticleIndex; ++i)
 	{
-		if (usedParticles[i].first == one && usedParticles[i].second == two ||
-			usedParticles[i].first == two && usedParticles[i].second == one)
+		if (m_usedParticles[i].first == one && m_usedParticles[i].second == two ||
+			m_usedParticles[i].first == two && m_usedParticles[i].second == one)
 			return true;
 	}
 	return false;

@@ -39,11 +39,6 @@ private:
 */
 class ParticlePlatformContactsGenerator : public ParticleContactGenerator
 {
-	struct Plane
-	{
-		DirectX::SimpleMath::Vector3 N;
-		float D;
-	};
 public:
 	ParticlePlatformContactsGenerator();
 	ParticlePlatformContactsGenerator(const DirectX::SimpleMath::Vector3& start, const DirectX::SimpleMath::Vector3& end);
@@ -54,9 +49,6 @@ public:
 private:
 	DirectX::SimpleMath::Vector3 m_start = DirectX::SimpleMath::Vector3::Zero;
 	DirectX::SimpleMath::Vector3 m_end = DirectX::SimpleMath::Vector3::Zero;
-
-	DirectX::SimpleMath::Vector3 n;
-	float d;
 };
 
 class ParticleParticleContactGenerator : public ParticleContactGenerator
@@ -70,6 +62,6 @@ private:
 	bool particlePairUsed(Particle* one, Particle* two) const;
 	static void shouldBeDestroyed(Particle* lhs, Particle* rhs, bool& outDestroyLhs, bool& outDestroyRhs);
 
-	std::vector<std::pair<Particle*, Particle*>> usedParticles;
+	std::vector<std::pair<Particle*, Particle*>> m_usedParticles;
 	int m_usedParticleIndex = 0;
 };
